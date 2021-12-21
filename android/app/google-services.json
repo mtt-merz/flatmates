@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "296254132822",
+    "project_id": "flatmates-5a03a",
+    "storage_bucket": "flatmates-5a03a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:296254132822:android:25c751854315c68a8f21f7",
+        "android_client_info": {
+          "package_name": "it.polimi.dima.flatmates"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "296254132822-89k1s2g20hkl662b6l6c158b41sc3c3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk1nsGseUL1DD7erRcfPCj7Ok7fILRdA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "296254132822-89k1s2g20hkl662b6l6c158b41sc3c3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
