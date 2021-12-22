@@ -1,19 +1,22 @@
 import 'dart:math';
 
-import 'package:flatmates/app/repositories/template/models/serializable_model.dart';
 import 'package:flutter/material.dart';
+
+import 'template/serializable_model.dart';
 
 part 'user.g.dart';
 
 enum UserType { mate, owner }
 
-@JsonSerializable(constructor: '_', explicitToJson: true)
+@JsonSerializable()
 class User extends ExtendedSerializableModel {
-  @JsonKey()
-  String? name;
+  static const String key = 'users';
 
   @JsonKey()
-  String? flat;
+  late String name;
+
+  @JsonKey()
+  late String flat;
 
   @JsonKey()
   int colorValue;

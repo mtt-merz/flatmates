@@ -1,32 +1,21 @@
-import 'package:flatmates/app/repositories/template/models/serializable_model.dart';
+import 'template/serializable_model.dart';
 
 part 'flat.g.dart';
 
-enum FlatRole { owner, mate }
-
 @JsonSerializable(constructor: '_')
 class Flat extends ExtendedSerializableModel {
+  static const String key = 'flats';
+
   @JsonKey(required: true)
   String name;
 
-  @JsonKey(required: true)
-  final String? owner;
-
-  @JsonKey(defaultValue: [])
-  final List<String> mates;
-
-  Flat(this.name, {required FlatRole role, required String userId})
-      : owner = role == FlatRole.owner ? userId : null,
-        mates = role == FlatRole.mate ? [userId] : [],
-        super.init();
+  Flat(this.name) : super.init();
 
   Flat._(
     String id,
     DateTime createdAt,
     DateTime updatedAt,
     this.name,
-    this.owner,
-    this.mates,
   ) : super(id, createdAt, updatedAt);
 
   @override

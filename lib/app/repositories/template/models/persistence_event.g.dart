@@ -30,7 +30,7 @@ Map<String, dynamic> _$PersistenceEventToJson(PersistenceEvent instance) =>
     };
 
 const _$PersistenceEventTypeEnumMap = {
-  PersistenceEventType.insert: 'INSERT',
-  PersistenceEventType.delete: 'DELETE',
-  PersistenceEventType.update: 'UPDATE',
+  PersistenceEventType.insert: 'insert',
+  PersistenceEventType.delete: 'delete',
+  PersistenceEventType.update: 'update',
 };

@@ -1,12 +1,11 @@
-import 'package:flatmates/app/ui/screens/expenses/expense_tile.dart';
-import 'package:flatmates/app/ui/screens/expenses/set_expense_screen.dart';
-import 'package:flatmates/app/ui/widget/card.dart';
 import 'package:flatmates/app/repositories/expense_repository.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
-import 'package:flatmates/app/repositories/user_repository.dart';
+import 'package:flatmates/app/ui/screens/expenses/add_expense_dialog.dart';
+import 'package:flatmates/app/ui/screens/expenses/expense_tile.dart';
+import 'package:flatmates/app/ui/screens/expenses/expense_view_model.dart';
+import 'package:flatmates/app/ui/widget/card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:rxdart/rxdart.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -16,20 +15,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  User get user => UserRepository.instance.user;
-
-  Flat get flat => FlatRepository.instance.mainFlat;
-
-  Widget get lastExpenses => CardColumn(
-        title: 'Last expenses',
-        children: ExpenseRepository.instance.objects
-            .map((expense) => ExpenseTile(expense) as Widget)
-            .toList()
-          ..add(ListTile(
-            title: const Text('View all'),
-            onTap: () => Navigator.of(context).pushNamed('expenses'),
-          )),
-      );
+  Widget get lastExpenses => StreamBuilder(
+      stream: ExpenseViewModel.latestExpensesStream,
+      builder: (context, snapshot) {
+        if (snapshot.hasData && (snapshot.data! as List).isEmpty) return const SizedBox();
+        return CardColumn(
+          title: 'Last expenses',
+          children: !snapshot.hasData
+              ? [const Center(child: CircularProgressIndicator())]
+              : (snapshot.data as List<Expense>)
+                  .map<Widget>((expense) => ExpenseTile(expense))
+                  .toList()
+            ..add(ListTile(
+              title: const Text('View all'),
+              onTap: () => Navigator.of(context).pushNamed('expenses'),
+            )),
+        );
+      });
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -55,44 +57,41 @@ class _HomeScreenState extends State<HomeScreen> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomLeft,
                 ))),
-            StreamBuilder(
-                stream: MergeStream([
-                  ExpenseRepository.instance.objectsStream,
-                ]),
-                builder: (context, _) {
-                  return CustomScrollView(slivers: [
-                    SliverAppBar(
-                      title: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Text(flat.name),
-                        const SizedBox(width: 5),
-                        const Icon(Icons.keyboard_arrow_down, size: 18)
-                      ]),
-                      pinned: true,
-                      // collapsedHeight: 100,
-                      backgroundColor: Colors.transparent,
-                      expandedHeight: 150,
-                      systemOverlayStyle: SystemUiOverlayStyle.light,
-                    ),
-                    SliverList(
-                        delegate: SliverChildListDelegate([
-                      lastExpenses,
-                      Card(
-                        child: ListTile(
-                          title: const Text('Chores'),
-                          trailing: const Icon(Icons.keyboard_arrow_right),
-                          onTap: () => Navigator.of(context).pushNamed('chores'),
-                        ),
-                      ),
-                    ]))
-                  ]);
-                }),
+            CustomScrollView(slivers: [
+              SliverAppBar(
+                title: StreamBuilder(
+                    stream: FlatRepository.instance.stream,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const SizedBox();
+
+                      final flat = snapshot.data as Flat;
+                      return Text(flat.name);
+                    }),
+                pinned: true,
+                // collapsedHeight: 100,
+                backgroundColor: Colors.transparent,
+                expandedHeight: 150,
+                systemOverlayStyle: SystemUiOverlayStyle.light,
+              ),
+              SliverList(
+                  delegate: SliverChildListDelegate([
+                lastExpenses,
+                Card(
+                  child: ListTile(
+                    title: const Text('Chores'),
+                    trailing: const Icon(Icons.keyboard_arrow_right),
+                    onTap: () => Navigator.of(context).pushNamed('chores'),
+                  ),
+                ),
+              ]))
+            ]),
           ],
         ),
         floatingActionButton: FloatingActionButton.extended(
           label: const Text('Add expense'),
           icon: const Icon(Icons.add),
           onPressed: () =>
-              showDialog(context: context, builder: (_) => const AddExpenseScreen())
+              showDialog(context: context, builder: (_) => const AddExpenseDialog())
                   .then((expense) {
             if (expense == null) return;
             ExpenseRepository.instance.insert(expense as Expense);

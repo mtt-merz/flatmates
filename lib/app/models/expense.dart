@@ -1,34 +1,43 @@
-import 'package:flatmates/app/repositories/template/models/serializable_model.dart';
+import 'template/serializable_model.dart';
 
 part 'expense.g.dart';
 
-@JsonSerializable(constructor: '_')
+@JsonSerializable()
 class Expense extends ExtendedSerializableModel {
-  @JsonKey(required: true)
-  double amount = 0;
+  static const String key = 'expenses';
 
   @JsonKey(required: true)
-  String title = '';
+  double amount;
 
   @JsonKey(required: true)
-  final List<String> issuers;
+  String? description;
 
   @JsonKey(required: true)
-  final List<String> addresses;
+  List<String> issuers;
 
-  Expense.init({required this.issuers, required this.addresses})
-      : amount = 0,
-        super.init();
+  @JsonKey(required: true)
+  List<String> addresses;
 
-  // To be called ONLY by the generator
+  @JsonKey(required: true)
+  final String flat;
+
+  Expense({
+    required this.flat,
+    required this.amount,
+    this.description,
+    required this.issuers,
+    required this.addresses,
+  }) : super.init();
+
   Expense._(
     String id,
     DateTime createdAt,
     DateTime updatedAt,
     this.amount,
-    this.title,
+    this.description,
     this.issuers,
     this.addresses,
+    this.flat,
   ) : super(id, createdAt, updatedAt);
 
   @override

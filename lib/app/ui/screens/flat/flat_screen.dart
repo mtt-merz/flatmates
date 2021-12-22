@@ -26,7 +26,7 @@ class _FlatScreenState extends State<FlatScreen> {
         body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           // Flat list
           StreamBuilder(
-            stream: FlatRepository.instance.objectsStream,
+            stream: FlatRepository.instance.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) return const CircularProgressIndicator();
 
@@ -75,7 +75,7 @@ class _FlatScreenState extends State<FlatScreen> {
             child: const Text('Set up your flat'),
             onPressed: () => Navigator.of(context).pushNamed('set_flat').then((flat) {
               if (flat == null) return;
-              FlatRepository.instance.insert(flat as Flat);
+              FlatRepository.instance.update(flat as Flat);
             }),
           ),
         ]),

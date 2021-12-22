@@ -56,7 +56,7 @@ class _InitUserScreenState extends State<InitUserScreen> {
 
   void submit() {
     final user = UserRepository.instance.user..name = controller.text;
-    UserRepository.instance.set(user);
+    UserRepository.instance.update(user);
 
     FocusScope.of(context).unfocus();
   }

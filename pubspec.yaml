@@ -23,6 +23,7 @@ dependencies:
   flutter_secure_storage: ^5.0.2
 
   json_annotation: ^4.4.0
+
   uuid: ^3.0.5
 
 dev_dependencies:

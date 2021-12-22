@@ -6,10 +6,8 @@ class CustomThemeData {
   final _primary = ThemeData.light().primaryColor;
 
   /// Text
-  final _text = TextTheme(
-    headline4: TextStyle(
-      color: Colors.blueGrey[700],
-      fontSize: 22.0,
+  final _text = const TextTheme(
+    headline5: TextStyle(
       fontWeight: FontWeight.w500,
     ),
     subtitle1: TextStyle(
@@ -19,11 +17,11 @@ class CustomThemeData {
     //   fontSize: 16.0,
     //   fontWeight: FontWeight.w500,
     // ),
-    button: const TextStyle(fontSize: 16.0),
+    button: TextStyle(fontSize: 16.0),
   );
 
   /// AppBar
-  get _appBar => AppBarTheme(
+  get _appBar => const AppBarTheme(
       // titleTextStyle: _text.headline4,
       // centerTitle: true,
       // color: Colors.transparent,

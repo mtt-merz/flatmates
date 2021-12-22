@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flatmates/app/repositories/template/models/persistence_event.dart';
+import 'package:flatmates/app/models/template/serializable_model.dart';
 import 'package:logging/logging.dart' show Logger;
 
-import 'package:flatmates/app/repositories/template/models/persistence_event.dart';
-import 'package:flatmates/app/repositories/template/models/serializable_model.dart';
+/// Get the [StoreRef] instance relative to the [key] param
+CollectionReference _collection(String key) => FirebaseFirestore.instance.collection(key);
 
 class Persistence {
   Logger get logger => Logger(runtimeType.toString());
@@ -15,17 +19,28 @@ class Persistence {
     if (_instance == null) return;
   }
 
-  final FirebaseFirestore _firestore;
+  Persistence._();
 
-  Persistence._() : _firestore = FirebaseFirestore.instance;
+  Stream<Map<String, dynamic>> getObjectStream(String key, String id) => _collection(key)
+          .doc(id)
+          .snapshots()
+          .transform(StreamTransformer.fromHandlers(handleData: (snapshot, sink) {
+        final data = snapshot.data() as Map<String, dynamic>?;
 
-  void addStoreListener(String key, void Function(PersistenceEvent) onChange) =>
-      _collection(key).snapshots().listen((event) {
-        for (var change in event.docChanges)
+        if (data == null) sink.addError('Error received on getObjectStream');
+        sink.add(data!);
+      }));
+
+  Stream<PersistenceEvent> getQueryStream(PersistenceQuery query) =>
+      query.toFirestoreQuery
+          .snapshots()
+          .transform(StreamTransformer.fromHandlers(handleData: (snapshot, sink) {
+        final key = query.key;
+        for (var change in snapshot.docChanges)
           switch (change.type) {
             case DocumentChangeType.added:
               // A new record has been ADDED
-              onChange(PersistenceEvent.insert(
+              sink.add(PersistenceEvent.insert(
                 collection: key,
                 recordId: change.doc.id,
                 record: change.doc.data() as Map<String, dynamic>,
@@ -33,7 +48,7 @@ class Persistence {
               break;
             case DocumentChangeType.modified:
               // A record has been UPDATED
-              onChange(PersistenceEvent.update(
+              sink.add(PersistenceEvent.update(
                 collection: key,
                 recordId: change.doc.id,
                 record: change.doc.data() as Map<String, dynamic>,
@@ -41,25 +56,21 @@ class Persistence {
               break;
             case DocumentChangeType.removed:
               // A record has been DELETED
-              onChange(PersistenceEvent.delete(
+              sink.add(PersistenceEvent.delete(
                 collection: key,
                 recordId: change.doc.id,
                 record: change.doc.data() as Map<String, dynamic>,
               ));
               break;
           }
-      });
+      }));
 
   /// Store the json [json] into the DB.
   /// The table is inferred through the [key] param.
   Future<bool> insertJson(String key, String id, Map<String, dynamic> json) {
     json.remove('id');
-    return _collection(key)
-        .add(json)
-        .then((value) => true)
-        .onError((error, stackTrace) {
-      logger.severe(
-          'Error on insert record $id in \'$key\'', error, stackTrace);
+    return _collection(key).add(json).then((value) => true).onError((error, stackTrace) {
+      logger.severe('Error on insert record $id in \'$key\'', error, stackTrace);
       return false;
     });
   }
@@ -78,8 +89,7 @@ class Persistence {
         .set(json)
         .then((_) => true)
         .onError((error, stackTrace) {
-      logger.severe(
-          'Error on update record $id in \'$key\'', error, stackTrace);
+      logger.severe('Error on update record $id in \'$key\'', error, stackTrace);
       return false;
     });
   }
@@ -101,13 +111,9 @@ class Persistence {
 
   /// Remove the record with id [id].
   /// The table is inferred through the [key] param.
-  Future<bool> removeFromId(String key, String id) => _collection(key)
-          .doc(id)
-          .delete()
-          .then((_) => true)
-          .onError((error, stackTrace) {
-        logger.severe(
-            'Unable to remove record $id in \'$key\'', error, stackTrace);
+  Future<bool> removeFromId(String key, String id) =>
+      _collection(key).doc(id).delete().then((_) => true).onError((error, stackTrace) {
+        logger.severe('Unable to remove record $id in \'$key\'', error, stackTrace);
         return false;
       });
 
@@ -136,14 +142,14 @@ class Persistence {
         final data = result.data() as Map<String, dynamic>?;
         return data?..['id'] = id;
       }).onError((error, stackTrace) {
-        logger.severe(
-            'Unable to fetch record $id from \'$key\'', error, stackTrace);
+        logger.severe('Unable to fetch record $id from \'$key\'', error, stackTrace);
         return null;
       });
 
   /// Return all records that satisfies the [query].
   /// The table is inferred through the [key] param.
-  Future<List<Map<String, dynamic>>> _getQuery(String key, Query query) => query
+  Future<List<Map<String, dynamic>>> getQuery(String key, PersistenceQuery query) =>
+      query.toFirestoreQuery
           .get()
           .then((result) => result.docs.map((element) {
                 final data = element.data() as Map<String, dynamic>;
@@ -151,20 +157,54 @@ class Persistence {
                 return data;
               }).toList())
           .onError((error, stackTrace) {
-        logger.severe(
-            'Unable to fetch records from \'$key\'', error, stackTrace);
+        logger.severe('Unable to fetch records from \'$key\'', error, stackTrace);
         return [];
       });
+}
 
-  /// Return all records stored in the [key] table.
-  /// The relative objects should be built through the proper Service class.
-  Future<List<Map<String, dynamic>>> getAll(String key) =>
-      _getQuery(key, _collection(key));
+/// Wrapper for the [Query] class
+class PersistenceQuery {
+  final String key;
+  final Query _query;
 
-  Future<List<Map<String, dynamic>>> getWhereFieldContains(String key,
-          {required String field, required String value}) =>
-      _getQuery(key, _collection(key).where(field, arrayContains: value));
+  Query get toFirestoreQuery => _query;
 
-  /// Get the [StoreRef] instance relative to the [key] param
-  CollectionReference _collection(String key) => _firestore.collection(key);
+  PersistenceQuery(this.key) : _query = _collection(key);
+
+  PersistenceQuery._(this.key, this._query);
+
+  PersistenceQuery isEqualTo({required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, isEqualTo: value));
+
+  PersistenceQuery isNotEqualTo({required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, isNotEqualTo: value));
+
+  PersistenceQuery isLessThan({required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, isLessThan: value));
+
+  PersistenceQuery isLessThanOrEqualTo({required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, isLessThanOrEqualTo: value));
+
+  PersistenceQuery isGreaterThan({required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, isGreaterThan: value));
+
+  PersistenceQuery isGreaterThanOrEqualTo(
+          {required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, isGreaterThanOrEqualTo: value));
+
+  PersistenceQuery arrayContains({required String field, required Object value}) =>
+      PersistenceQuery._(key, _query.where(field, arrayContains: value));
+
+  PersistenceQuery arrayContainsAny(
+          {required String field, required List<Object> value}) =>
+      PersistenceQuery._(key, _query.where(field, arrayContainsAny: value));
+
+  PersistenceQuery whereIn({required String field, required List<Object> value}) =>
+      PersistenceQuery._(key, _query.where(field, whereIn: value));
+
+  PersistenceQuery whereNotIn({required String field, required List<Object> value}) =>
+      PersistenceQuery._(key, _query.where(field, whereNotIn: value));
+
+  PersistenceQuery isNull({required String field, required bool isNull}) =>
+      PersistenceQuery._(key, _query.where(field, isNull: isNull));
 }

@@ -1,4 +1,4 @@
-import 'package:flatmates/app/repositories/template/models/serializable_model.dart';
+import 'package:flatmates/app/models/template/serializable_model.dart';
 
 part 'persistence_event.g.dart';
 

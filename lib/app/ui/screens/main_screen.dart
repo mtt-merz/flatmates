@@ -1,12 +1,13 @@
+import 'package:flatmates/app/repositories/expense_repository.dart';
+import 'package:flatmates/app/repositories/flat_repository.dart';
+import 'package:flatmates/app/repositories/mate_repository.dart';
+import 'package:flatmates/app/repositories/user_repository.dart';
+import 'package:flatmates/app/services/authentication_service.dart';
 import 'package:flatmates/app/ui/screens/authentication_screen.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_screen.dart';
 import 'package:flatmates/app/ui/screens/home_screen.dart';
 import 'package:flatmates/app/ui/screens/initialize_user_screen.dart';
 import 'package:flatmates/app/ui/screens/splash_screen.dart';
-import 'package:flatmates/app/repositories/expense_repository.dart';
-import 'package:flatmates/app/repositories/flat_repository.dart';
-import 'package:flatmates/app/repositories/user_repository.dart';
-import 'package:flatmates/app/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatelessWidget {
@@ -25,7 +26,7 @@ class MainScreen extends StatelessWidget {
 
           // User authenticated
           return StreamBuilder(
-            stream: UserRepository.instance.userStream,
+            stream: UserRepository.instance.stream,
             builder: (context, snapshot) {
               if (snapshot.hasError)
                 return SplashScreen(message: snapshot.error.toString());
@@ -49,7 +50,8 @@ class MainScreen extends StatelessWidget {
   }
 
   Future<void> loadData() async {
-    await FlatRepository.instance.mainFlatStream.first;
-    await ExpenseRepository.instance.objectsStream.first;
+    await FlatRepository.instance.stream.first;
+    await MateRepository.instance.stream.first;
+    await ExpenseRepository.instance.stream.first;
   }
 }

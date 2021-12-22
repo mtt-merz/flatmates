@@ -1,32 +1,20 @@
 import 'package:flatmates/app/models/expense.dart';
+import 'package:flatmates/app/repositories/user_repository.dart';
 import 'package:flatmates/app/services/persistence/persistence.dart';
-import 'package:flatmates/app/repositories/template/repository.dart';
 
-export 'package:flatmates/app/models/expense.dart';
+import 'template/collection_repository.dart';
 
-const _key = 'expenses';
-
-class ExpenseRepository extends Repository<Expense> {
-  static ExpenseRepository get instance => _instance ??= ExpenseRepository._();
+class ExpenseRepository extends CollectionRepository<Expense> {
+  static ExpenseRepository get instance =>
+      _instance ??= ExpenseRepository._(UserRepository.instance.user.flat);
   static ExpenseRepository? _instance;
 
-  @override
-  String get key => 'expenses';
-
-  ExpenseRepository._()
+  ExpenseRepository._(String flatId)
       : super(
-            builder: Expense.fromJson,
-            fetchObjects: () => Persistence.instance.getAll(_key));
+          builder: Expense.fromJson,
+          query: PersistenceQuery(Expense.key).isEqualTo(field: 'flat', value: flatId),
+        );
 
-  /// Divide expenses in daily groups
-  List<List<Expense>> get diary => objects.fold([], (diary, expense) {
-        for (List<Expense> dailyExpenses in diary)
-          if (dailyExpenses.any((e) => e.createdAt.day == expense.createdAt.day)) {
-            dailyExpenses.add(expense);
-            return diary;
-          }
-
-        diary.add([expense]);
-        return diary;
-      });
+  @override
+  void refresh() => _instance = null;
 }

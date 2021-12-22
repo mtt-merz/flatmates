@@ -1,9 +1,11 @@
-import 'package:flatmates/app/repositories/template/models/serializable_model.dart';
+import 'template/serializable_model.dart';
 
 part 'chore.g.dart';
 
 @JsonSerializable()
 class Chore extends ExtendedSerializableModel {
+  static const String key = 'chores';
+
   @JsonKey(required: true)
   final String title;
 

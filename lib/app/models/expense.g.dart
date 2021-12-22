@@ -10,31 +10,28 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
     requiredKeys: const [
-      'id',
-      'createdAt',
       'amount',
-      'title',
+      'description',
       'issuers',
-      'addresses'
+      'addresses',
+      'flat'
     ],
   );
-  return Expense._(
-    json['id'] as String,
-    DateTime.parse(json['createdAt'] as String),
-    DateTime.parse(json['updatedAt'] as String),
-    (json['amount'] as num).toDouble(),
-    json['title'] as String,
-    (json['issuers'] as List<dynamic>).map((e) => e as String).toList(),
-    (json['addresses'] as List<dynamic>).map((e) => e as String).toList(),
+  return Expense(
+    flat: json['flat'] as String,
+    amount: (json['amount'] as num).toDouble(),
+    description: json['description'] as String? ?? '',
+    issuers:
+        (json['issuers'] as List<dynamic>).map((e) => e as String).toList(),
+    addresses:
+        (json['addresses'] as List<dynamic>).map((e) => e as String).toList(),
   );
 }
 
 Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
-      'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'amount': instance.amount,
-      'title': instance.title,
+      'description': instance.description,
       'issuers': instance.issuers,
       'addresses': instance.addresses,
+      'flat': instance.flat,
     };
