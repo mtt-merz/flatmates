@@ -1,18 +1,17 @@
-import 'package:flatmates/app/models/expense.dart';
-import 'package:flatmates/app/repositories/user_repository.dart';
-import 'package:flatmates/app/services/persistence/persistence.dart';
+import 'package:flatmates/app/models/expense/expense.dart';
+import 'package:flatmates/app/services/persistence.dart';
 
-import 'template/collection_repository.dart';
+import 'template/repository_collection.dart';
 
-class ExpenseRepository extends CollectionRepository<Expense> {
-  static ExpenseRepository get instance =>
-      _instance ??= ExpenseRepository._(UserRepository.instance.user.flat);
+class ExpenseRepository extends RepositoryCollection<Expense> {
+  static ExpenseRepository get instance => _instance ??= ExpenseRepository._();
   static ExpenseRepository? _instance;
 
-  ExpenseRepository._(String flatId)
+  ExpenseRepository._()
       : super(
           builder: Expense.fromJson,
-          query: PersistenceQuery(Expense.key).isEqualTo(field: 'flat', value: flatId),
+          query: PersistenceQuery(expenseKey)
+              .isEqualTo(field: 'flat', value: 'test'),
         );
 
   @override

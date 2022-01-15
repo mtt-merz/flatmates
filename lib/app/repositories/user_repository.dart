@@ -1,25 +1,37 @@
-import 'dart:async';
+import 'package:flatmates/app/models/user/user.dart';
+import 'package:flatmates/app/repositories/template/repository_mixin.dart';
+import 'package:flatmates/app/services/persistence.dart';
+import 'package:rxdart/rxdart.dart';
 
-import 'package:flatmates/app/models/user.dart';
-import 'package:flatmates/app/services/authentication_service.dart';
+export 'package:flatmates/app/models/user/user.dart';
 
-import 'template/object_repository.dart';
+class UserRepository with RepositoryMixin<User> {
+  static late UserRepository instance;
 
-export 'package:flatmates/app/models/user.dart';
+  static Future<void> init(String userId) async {
+    final rawUser = await Persistence.instance.getFromId(userKey, userId);
+    if (rawUser != null)
+      instance = UserRepository._(User.fromJson(rawUser));
+    else {
+      // No stored user instance: create and store a new one
+      final user = User(userId);
+      await Persistence.instance.update(user);
 
-class UserRepository extends ObjectRepository<User> {
-  static UserRepository get instance =>
-      _instance ??= UserRepository._(AuthenticationService.instance.userId);
-  static UserRepository? _instance;
+      instance = UserRepository._(user);
+    }
+  }
 
-  User get user => object;
+  final BehaviorSubject<User> _streamController = BehaviorSubject();
 
-  UserRepository._(String userId) : super(User.key, userId, builder: User.fromJson);
+  UserRepository._(User user) {
+    _streamController.add(user);
+  }
+
+  void update(User user) {
+    _streamController.add(user);
+    Persistence.instance.update(user);
+  }
 
   @override
-  void refresh() => _instance = null;
-
-  // TODO: implement this method in the ViewModel
-  Future<void> dynamicUpdate(User Function(User) updater) async =>
-      update(updater(await stream.first));
+  Stream<User> get stream => _streamController.stream;
 }

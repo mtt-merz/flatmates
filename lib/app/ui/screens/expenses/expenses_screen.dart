@@ -1,40 +1,41 @@
-import 'package:flatmates/app/models/user.dart';
+import 'package:flatmates/app/models/expense/expense.dart';
+import 'package:flatmates/app/ui/screens/expenses/add_expense_dialog.dart';
 import 'package:flatmates/app/ui/screens/expenses/expense_tile.dart';
-import 'package:flatmates/app/ui/screens/expenses/expense_view_model.dart';
 import 'package:flatmates/app/ui/utils/printer.dart';
+import 'package:flatmates/app/ui/widget/page_template.dart';
 import 'package:flutter/material.dart';
 
-class ExpensesScreen extends StatefulWidget {
-  const ExpensesScreen({Key? key}) : super(key: key);
+class ExpensesPage extends StatefulWidget {
+  const ExpensesPage({Key? key}) : super(key: key);
 
   @override
-  _ExpensesScreenState createState() => _ExpensesScreenState();
+  _ExpensesPageState createState() => _ExpensesPageState();
 }
 
-class _ExpensesScreenState extends State<ExpensesScreen> {
-  Widget buildBalanceWidget(List<User> mates) {
-    const balance = -5.03;
-    const color = balance >= 0 ? Colors.green : Colors.red;
-
-    return Column(
-      children: [
-        Card(
-          child: ListView.separated(
-            shrinkWrap: true,
-            separatorBuilder: (c, i) => const Divider(),
-            itemCount: mates.length,
-            itemBuilder: (c, i) => ListTile(
-              // leading: mates[i].avatar,
-              title: Text(mates[i].name),
-              trailing: Text('€ $balance',
-                  style: Theme.of(context).textTheme.bodyText2!.copyWith(color: color)),
-            ),
-          ),
-        ),
-        ElevatedButton(onPressed: () {}, child: const Text('Solve balance')),
-      ],
-    );
-  }
+class _ExpensesPageState extends State<ExpensesPage> {
+  // Widget buildBalanceWidget(List<Mate> mates) {
+  //   const balance = -5.03;
+  //   const color = balance >= 0 ? Colors.green : Colors.red;
+  //
+  //   return Column(
+  //     children: [
+  //       Card(
+  //         child: ListView.separated(
+  //           shrinkWrap: true,
+  //           separatorBuilder: (c, i) => const Divider(),
+  //           itemCount: mates.length,
+  //           itemBuilder: (c, i) => ListTile(
+  //             // leading: mates[i].avatar,
+  //             title: Text(mates[i].name),
+  //             trailing: Text('€ $balance',
+  //                 style: Theme.of(context).textTheme.bodyText2!.copyWith(color: color)),
+  //           ),
+  //         ),
+  //       ),
+  //       ElevatedButton(onPressed: () {}, child: const Text('Solve balance')),
+  //     ],
+  //   );
+  // }
 
   Widget buildExpensesDiaryWidget(List<List<Expense>> expensesDiary) {
     if (expensesDiary.isEmpty) return const Text('No expenses added');
@@ -63,26 +64,31 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Expenses')),
-      body: ListView(
-        children: [
-          // Total balance of mates
-          // buildBalanceWidget(mates),
-
-          // Expenses history
-          StreamBuilder(
-              stream: ExpenseViewModel.expensesDiaryStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasError) return const CircularProgressIndicator();
-                if (!snapshot.hasData) return const CircularProgressIndicator();
-
-                List<List<Expense>> expensesDiary = snapshot.data as List<List<Expense>>;
-                return buildExpensesDiaryWidget(expensesDiary);
-              })
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        body: const PageTemplate(
+          title: 'Expenses',
+          children: [
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+            Card(child: ListTile(title: Text(''))),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () =>
+              showDialog(context: context, builder: (context) => const AddExpenseDialog()),
+        ),
+      );
 }

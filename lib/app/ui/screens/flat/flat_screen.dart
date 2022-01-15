@@ -1,6 +1,9 @@
-import 'package:flatmates/app/repositories/flat_repository.dart';
-import 'package:flatmates/app/ui/widget/card.dart';
+import 'package:flatmates/app/blocs/flat_cubit.dart';
+import 'package:flatmates/app/models/flat/flat.dart';
+import 'package:flatmates/app/ui/screens/flat/flat_common_space_widget.dart';
+import 'package:flatmates/app/ui/screens/flat/flat_common_spaces_setter_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FlatScreen extends StatefulWidget {
   const FlatScreen({Key? key}) : super(key: key);
@@ -10,74 +13,120 @@ class FlatScreen extends StatefulWidget {
 }
 
 class _FlatScreenState extends State<FlatScreen> {
+  late final FlatCubit cubit;
+  final TextEditingController titleController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+    cubit = FlatCubit();
   }
 
   @override
   void dispose() {
     super.dispose();
+    cubit.close();
   }
+
+  // Widget buildUserChip(User user) {
+  //   return ListTile(
+  //     title: Text(user.name, style: Theme.of(context).textTheme.subtitle2),
+  //     leading: CircleAvatar(backgroundColor: user.color),
+  //     horizontalTitleGap: 12,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Flat Screen')),
-        body: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          // Flat list
-          StreamBuilder(
-            stream: FlatRepository.instance.stream,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) return const CircularProgressIndicator();
+        appBar: AppBar(
+          title: const Text('My Flat'),
+          actions: [
+            BlocBuilder(
+                bloc: cubit,
+                builder: (context, state) {
+                  if (state is Loading) return const CircularProgressIndicator();
+                  if (state is Updated)
+                    return TextButton(
+                      child: const Text('Save'),
+                      onPressed: () => cubit.save(),
+                    );
 
-              final flats = snapshot.data as List<Flat>;
-              return Column(
-                children: flats
-                    .map((flat) => Card(
-                            child: ListTile(
-                          title: Text(flat.name),
-                        )))
-                    .toList(),
-              );
-            },
-          ),
+                  return const SizedBox();
+                })
+          ],
+        ),
+        backgroundColor: Theme.of(context).cardColor,
+        body: BlocBuilder(
+            bloc: cubit,
+            builder: (context, state) {
+              if (state is Loading) return const Center(child: CircularProgressIndicator());
 
-          // Join an existing flat
-          CardColumn(
-            title: 'Join an existing flat',
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
+              assert(state is Show);
+              final flat = (state as Show).flat;
+
+              if (flat.name != null) titleController.text = flat.name!;
+
+              return ListView(
+                shrinkWrap: true,
                 children: [
-                  const Expanded(
-                    child: TextField(
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          label: Text('Invite code', textAlign: TextAlign.center),
-                        )),
+                  // Name
+                  Card(
+                    child: Text('NAME', style: Theme.of(context).textTheme.caption),
                   ),
-                  IconButton(
-                    icon: const CircleAvatar(child: Icon(Icons.arrow_right)),
-                    onPressed: () {},
+                  ListTile(
+                    title: TextField(
+                      controller: titleController,
+                      onChanged: (value) => cubit.setName(value),
+                    ),
+                  ),
+
+                  // Mates
+                  const Divider(),
+                  ListTile(
+                    title: Text('MATES', style: Theme.of(context).textTheme.caption),
+                    trailing: TextButton(
+                      child: const Text('Add'),
+                      onPressed: () {},
+                    ),
+                    dense: true,
+                  ),
+
+                  Wrap(
+                    alignment: WrapAlignment.spaceEvenly,
+                    spacing: 28,
+                    children: flat.mates.map<Widget>((mate) => Text(mate.name)).toList(),
+                  ),
+
+                  // Common spaces
+                  const Divider(),
+                  Card(
+                    child: Text('COMMON SPACES', style: Theme.of(context).textTheme.caption),
+                  ),
+                  Column(
+                    children: flat.commonSpaces.isNotEmpty
+                        ? flat.commonSpaces
+                            .map((e) => CommonSpaceWidget(title: e.name, backgroundColor: e.color))
+                            .toList()
+                        : [const Card(child: Text('No common spaces specified yet'))],
+                  ),
+
+                  // Add common spaces button
+                  Padding(
+                    padding: Theme.of(context).cardTheme.margin!,
+                    child: OutlinedButton(
+                      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+                        Icon(Icons.add),
+                        SizedBox(width: 10),
+                        Text('Add common spaces'),
+                      ]),
+                      onPressed: () => showDialog<List<CommonSpace>?>(
+                              context: context,
+                              builder: (context) => SetCommonSpacesDialog(flat.commonSpaces))
+                          .then((commonSpaces) => cubit.setCommonSpaces(commonSpaces)),
+                    ),
                   )
                 ],
-              ),
-            ],
-          ),
-
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
-            child: Text('or'),
-          ),
-
-          // Insert a new flat
-          ElevatedButton(
-            child: const Text('Set up your flat'),
-            onPressed: () => Navigator.of(context).pushNamed('set_flat').then((flat) {
-              if (flat == null) return;
-              FlatRepository.instance.update(flat as Flat);
+              );
             }),
-          ),
-        ]),
       );
 }

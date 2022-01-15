@@ -1,15 +1,15 @@
-import 'package:flatmates/app/models/chore.dart';
+import 'package:flatmates/app/models/chore/chore.dart';
 import 'package:flutter/material.dart';
 
-class ChoresScreen extends StatefulWidget {
-  const ChoresScreen({Key? key}) : super(key: key);
+class ChoresPage extends StatefulWidget {
+  const ChoresPage({Key? key}) : super(key: key);
 
   @override
-  _ChoresScreenState createState() => _ChoresScreenState();
+  _ChoresPageState createState() => _ChoresPageState();
 }
 
 
-class _ChoresScreenState extends State<ChoresScreen> {
+class _ChoresPageState extends State<ChoresPage> {
   List<Chore> chores = [];
 
   @override

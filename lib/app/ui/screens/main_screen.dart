@@ -1,57 +1,72 @@
-import 'package:flatmates/app/repositories/expense_repository.dart';
-import 'package:flatmates/app/repositories/flat_repository.dart';
-import 'package:flatmates/app/repositories/mate_repository.dart';
-import 'package:flatmates/app/repositories/user_repository.dart';
-import 'package:flatmates/app/services/authentication_service.dart';
-import 'package:flatmates/app/ui/screens/authentication_screen.dart';
-import 'package:flatmates/app/ui/screens/flat/flat_screen.dart';
-import 'package:flatmates/app/ui/screens/home_screen.dart';
-import 'package:flatmates/app/ui/screens/initialize_user_screen.dart';
-import 'package:flatmates/app/ui/screens/splash_screen.dart';
+import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
+import 'package:flatmates/app/ui/screens/expenses/expenses_screen.dart';
+import 'package:flatmates/app/ui/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
 
-class MainScreen extends StatelessWidget {
-  const MainScreen({Key? key}) : super(key: key);
+import 'chat/chat_page.dart';
+
+class MainScreen extends StatefulWidget {
+  const MainScreen({this.initialPage = 1, Key? key}) : super(key: key);
+
+  final int initialPage;
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: AuthenticationService.instance.onAuthEvent,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) return SplashScreen(message: snapshot.error.toString());
-          if (!snapshot.hasData) return const SplashScreen();
+  _MainScreenState createState() => _MainScreenState();
+}
 
-          final authenticated = snapshot.data as bool;
-          if (!authenticated) return const AuthenticationScreen();
+class _MainScreenState extends State<MainScreen> {
+  late int page;
+  late final PageController pageController;
 
-          // User authenticated
-          return StreamBuilder(
-            stream: UserRepository.instance.stream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError)
-                return SplashScreen(message: snapshot.error.toString());
-              if (!snapshot.hasData) return const SplashScreen();
+  final pages = const [HomePage(), ExpensesPage(), ChoresPage(), ChatPage()];
 
-              final user = snapshot.data as User;
-              if (user.name == null) return const InitUserScreen();
-              if (user.flat == null) return const FlatScreen();
+  @override
+  void initState() {
+    super.initState();
 
-              return FutureBuilder(
-                  future: loadData(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done)
-                      return const SplashScreen();
-
-                    return const HomeScreen();
-                  });
-            },
-          );
-        });
+    page = widget.initialPage;
+    pageController = PageController(initialPage: page);
   }
 
-  Future<void> loadData() async {
-    await FlatRepository.instance.stream.first;
-    await MateRepository.instance.stream.first;
-    await ExpenseRepository.instance.stream.first;
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        body: PageView(
+          controller: pageController,
+          onPageChanged: (page) => setState(() => this.page = page),
+          children: pages,
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: page,
+          onTap: (page) => setState(() {
+            this.page = page;
+            pageController.jumpToPage(page);
+          }),
+          items: const [
+            BottomNavigationBarItem(
+              label: 'Home',
+              icon: Icon(Icons.home),
+            ),
+            BottomNavigationBarItem(
+              label: 'Expenses',
+              icon: Icon(Icons.euro),
+            ),
+            BottomNavigationBarItem(
+              label: 'Chores',
+              icon: Icon(Icons.cleaning_services),
+            ),
+            BottomNavigationBarItem(
+              label: 'Messages',
+              icon: Icon(Icons.chat),
+            ),
+          ],
+        ),
+      );
+
+  void onPageSwiped;
 }

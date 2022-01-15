@@ -1,49 +1,66 @@
 import 'dart:async';
 
-import 'package:flatmates/app/models/expense.dart';
+import 'package:flatmates/app/models/expense/expense.dart';
+import 'package:flatmates/app/models/flat/mate.dart';
 import 'package:flatmates/app/repositories/expense_repository.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
-import 'package:flatmates/app/repositories/mate_repository.dart';
-import 'package:flatmates/app/repositories/user_repository.dart';
 
-export 'package:flatmates/app/models/expense.dart';
+abstract class ExpenseViewModelInterface {
+  Expense get defaultExpense;
 
-class ExpenseViewModel {
-  static Expense get defaultExpense => Expense(
+  List<Mate> get mates;
+
+  bool check(Expense expense);
+
+  void insert(Expense expense);
+
+  Stream<List<Expense>> get allExpensesStream;
+
+  Stream<List<Expense>> get latestExpensesStream;
+
+  Stream<List<List<Expense>>> get expensesDiaryStream;
+}
+
+class ExpenseViewModel implements ExpenseViewModelInterface {
+  @override
+  Expense get defaultExpense => Expense(
         amount: 0,
-        flat: FlatRepository.instance.object.id,
-        issuers: [UserRepository.instance.user.id],
-        addresses: mates.map((mate) => mate.id).toList(),
+        flat: 'FlatRepository.instance.object!.id',
+        // TODO: update this
+        issuer: Mate('test'),
+        addresses: mates,
       );
 
-  static List<User> get mates => MateRepository.instance.objects;
+  @override
+  List<Mate> get mates =>[];// FlatRepository.instance.object!.mates;
 
-  static User getMate(String mateId) => mates.firstWhere((mate) => mate.id == mateId);
+  @override
+  bool check(Expense expense) => expense.amount != 0;
 
-  static bool check(Expense expense) => expense.amount != 0;
-
-  static void insert(Expense expense) {
+  @override
+  void insert(Expense expense) {
     if (expense.description?.isEmpty ?? false) expense.description = null;
     ExpenseRepository.instance.insert(expense);
   }
 
-  static Stream<List<Expense>> get allExpensesStream => ExpenseRepository.instance.stream;
+  @override
+  Stream<List<Expense>> get allExpensesStream => ExpenseRepository.instance.stream;
 
-  static Stream<List<Expense>> get latestExpensesStream =>
-      ExpenseRepository.instance.stream.transform(
+  @override
+  Stream<List<Expense>> get latestExpensesStream => ExpenseRepository.instance.stream.transform(
         StreamTransformer.fromHandlers(
             handleData: (expenses, sink) =>
                 sink.add(expenses.length > 4 ? expenses.sublist(0, 4) : expenses)),
       );
 
-  static Stream<List<List<Expense>>> get expensesDiaryStream =>
+  @override
+  Stream<List<List<Expense>>> get expensesDiaryStream =>
       ExpenseRepository.instance.stream.transform(
         StreamTransformer.fromHandlers(
             handleData: (expenses, sink) => sink.add(
                   expenses.fold<List<List<Expense>>>([], (diary, expense) {
                     for (List<Expense> dailyExpenses in diary)
-                      if (dailyExpenses
-                          .any((e) => e.createdAt.day == expense.createdAt.day)) {
+                      if (dailyExpenses.any((e) => e.createdAt.day == expense.createdAt.day)) {
                         dailyExpenses.add(expense);
                         return diary;
                       }

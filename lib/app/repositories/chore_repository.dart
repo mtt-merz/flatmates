@@ -1,22 +1,19 @@
-import 'package:flatmates/app/models/chore.dart';
-import 'package:flatmates/app/repositories/user_repository.dart';
-import 'package:flatmates/app/services/persistence/persistence.dart';
+import 'package:flatmates/app/models/chore/chore.dart';
+import 'package:flatmates/app/services/persistence.dart';
 
-import 'template/collection_repository.dart';
+import 'template/repository_collection.dart';
 
-export 'package:flatmates/app/models/chore.dart';
+export 'package:flatmates/app/models/chore/chore.dart';
 
-class ChoreRepository extends CollectionRepository<Chore> {
-  static ChoreRepository get instance =>
-      _instance ??= ChoreRepository._(UserRepository.instance.user.flat);
+class ChoreRepository extends RepositoryCollection<Chore> {
+  static ChoreRepository get instance => _instance ??= ChoreRepository._();
   static ChoreRepository? _instance;
 
-  User? user;
-
-  ChoreRepository._(String flatId)
+  ChoreRepository._()
       : super(
             builder: Chore.fromJson,
-            query: PersistenceQuery(Chore.key).isEqualTo(field: 'flat', value: flatId));
+            query: PersistenceQuery(choreKey)
+                .isEqualTo(field: 'flat', value: 'UserRepository.instance.object!.flat'));
 
   @override
   void refresh() => _instance = null;
