@@ -1,13 +1,11 @@
-import 'package:flatmates/app/models/flat/mate.dart';
-
 import '../serializable_model.dart';
 
 part 'expense.g.dart';
 
-const expenseKey = 'expenses';
-
 @JsonSerializable()
 class Expense extends SerializableModel {
+  static const key = 'expenses';
+
   @JsonKey(required: true)
   double amount;
 
@@ -15,32 +13,35 @@ class Expense extends SerializableModel {
   String? description;
 
   @JsonKey(required: true)
-  Mate issuer;
+  String issuerId;
 
   @JsonKey(required: true)
-  List<Mate> addresses;
+  List<String> addresseeIds;
 
   @JsonKey(required: true)
-  final String flat;
+  final String flatId;
+
+  @JsonKey(required: true)
+  final DateTime timestamp;
 
   Expense({
-    required this.flat,
+    required this.flatId,
     required this.amount,
     this.description,
-    required this.issuer,
-    required this.addresses,
-  }) : super.init(expenseKey);
+    required this.issuerId,
+    required this.addresseeIds,
+  })  : timestamp = DateTime.now(),
+        super.init(key);
 
   Expense._(
     String id,
-    DateTime createdAt,
-    DateTime updatedAt,
     this.amount,
     this.description,
-    this.issuer,
-    this.addresses,
-    this.flat,
-  ) : super(id, expenseKey, createdAt, updatedAt);
+    this.issuerId,
+    this.addresseeIds,
+    this.flatId,
+    this.timestamp,
+  ) : super(id);
 
   @override
   factory Expense.fromJson(json) => _$ExpenseFromJson(json);

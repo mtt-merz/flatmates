@@ -1,37 +1,33 @@
 import 'package:flatmates/app/models/user/user.dart';
-import 'package:flatmates/app/repositories/template/repository_mixin.dart';
-import 'package:flatmates/app/services/persistence.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flatmates/app/repositories/repository.dart';
+import 'package:flatmates/app/services/persistence/persistence_service.dart';
+import 'package:get_it/get_it.dart';
+import 'package:logging/logging.dart' show Logger;
 
 export 'package:flatmates/app/models/user/user.dart';
 
-class UserRepository with RepositoryMixin<User> {
-  static late UserRepository instance;
+class UserRepository with Repository<User> {
+  Logger get logger => Logger(runtimeType.toString());
 
-  static Future<void> init(String userId) async {
-    final rawUser = await Persistence.instance.getFromId(userKey, userId);
-    if (rawUser != null)
-      instance = UserRepository._(User.fromJson(rawUser));
-    else {
-      // No stored user instance: create and store a new one
-      final user = User(userId);
-      await Persistence.instance.update(user);
+  final _persistence = GetIt.I<PersistenceService>();
 
-      instance = UserRepository._(user);
-    }
+  Future<void> load(String userId) async {
+    final rawUser = await _persistence.getFromId(User.key, userId);
+    if (rawUser != null) return addEvent(User.fromJson(rawUser));
+
+    // No stored user instance: create and store a new one
+    final user = User(userId);
+    await _persistence.update(User.key, user);
+
+    return addEvent(user);
   }
 
-  final BehaviorSubject<User> _streamController = BehaviorSubject();
+  Future<void> update(User Function(User) updater) async {
+    final user = updater(await data);
 
-  UserRepository._(User user) {
-    _streamController.add(user);
+    addEvent(user);
+    await _persistence.update(User.key, user);
   }
 
-  void update(User user) {
-    _streamController.add(user);
-    Persistence.instance.update(user);
-  }
-
-  @override
-  Stream<User> get stream => _streamController.stream;
+  Future<void> remove() async => _persistence.remove(User.key, await data);
 }

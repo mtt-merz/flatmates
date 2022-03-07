@@ -1,3 +1,5 @@
+import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
+import 'package:flatmates/app/ui/screens/expenses/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_screen.dart';
 import 'package:flatmates/app/ui/screens/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +15,9 @@ class CustomRouter {
       case '/':
         return buildRoute((_) => const MainScreen());
       case '/expenses':
-        return buildRoute((_) => const MainScreen(initialPage: 1));
+        return buildRoute((_) => const ExpensesScreen());
       case '/chores':
-        return buildRoute((_) => const MainScreen(initialPage: 2));
-      case '/chat':
-        return buildRoute((_) => const MainScreen(initialPage: 3));
+        return buildRoute((_) => const ChoresScreen());
       case '/flat':
         return buildRoute((_) => const FlatScreen());
       case '/expense/detail':

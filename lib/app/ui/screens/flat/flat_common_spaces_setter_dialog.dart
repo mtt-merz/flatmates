@@ -1,4 +1,4 @@
-import 'package:flatmates/app/models/flat/common_space.dart';
+import 'package:flatmates/app/models/flat/common_space/common_space.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_common_space_widget.dart';
 import 'package:flatmates/app/ui/widget/dialog_template.dart';
 import 'package:flutter/material.dart';

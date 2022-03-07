@@ -9,12 +9,10 @@ part of 'flat.dart';
 Flat _$FlatFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['id', 'createdAt', 'name', 'mates', 'commonSpaces'],
+    requiredKeys: const ['id', 'name', 'mates', 'commonSpaces'],
   );
   return Flat._(
     json['id'] as String,
-    DateTime.parse(json['createdAt'] as String),
-    DateTime.parse(json['updatedAt'] as String),
     json['name'] as String?,
     (json['mates'] as List<dynamic>).map((e) => Mate.fromJson(e)).toList(),
     (json['commonSpaces'] as List<dynamic>?)
@@ -26,8 +24,6 @@ Flat _$FlatFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$FlatToJson(Flat instance) => <String, dynamic>{
       'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'name': instance.name,
       'mates': instance.mates,
       'commonSpaces': instance.commonSpaces,

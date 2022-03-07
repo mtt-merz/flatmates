@@ -11,7 +11,6 @@ class CommonSpace {
   @JsonKey(required: true)
   final int colorValue;
 
-  @JsonKey(ignore: true)
   Color get color => Color(colorValue);
 
   CommonSpace(this.name, {Color? color}) : colorValue = color?.value ?? Colors.white.value;

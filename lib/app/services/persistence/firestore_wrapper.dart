@@ -2,60 +2,58 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flatmates/app/models/serializable_model.dart';
+import 'package:flatmates/app/services/persistence/persistence_service.dart';
 import 'package:logging/logging.dart' show Logger;
 
 /// Get the [StoreRef] instance relative to the [key] param
 CollectionReference _collection(String key) => FirebaseFirestore.instance.collection(key);
 
-class Persistence {
+class FirestoreWrapper implements PersistenceService {
   Logger get logger => Logger(runtimeType.toString());
 
-  static Persistence get instance => _instance ??= Persistence._();
-  static Persistence? _instance;
+  @override
+  void dispose() {}
 
-  Persistence._();
-
-  /// Generate an unique ID for a generic collection.
+  @override
   String generateId(String key) => _collection(key).doc().id;
 
-  /// Store [object] into the DB.
-  /// The table is inferred through the [key] param.
-  Future<bool> insert(SerializableModel object) =>
-      insertJson(object.key, object.id, object.toJson());
+  @override
+  Future<bool> insert(String key, SerializableModel object) =>
+      insertJson(key, object.id, object.toJson());
 
-  /// Store the json [json] into the DB.
-  /// The table is inferred through the [key] param.
+  @override
   Future<bool> insertJson(String key, String id, Map<String, dynamic> json) => _collection(key)
           .doc(id)
           .set(json
             ..remove('id')
             ..remove('key'))
-          .then((value) => true)
-          .onError((error, stackTrace) {
+          .then((value) {
+        logger.info('Inserted record $id in \'$key\' updated');
+        return true;
+      }).onError((error, stackTrace) {
         logger.severe('Error on insert record $id in \'$key\'', error, stackTrace);
         return false;
       });
 
-  /// Update a [SerializableModel1] instance.
-  /// The table is inferred through the [key] param.
-  Future<bool> update(SerializableModel object) =>
-      updateJson(object.key, object.id, object.toJson());
+  @override
+  Future<bool> update(String key, SerializableModel object) =>
+      updateJson(key, object.id, object.toJson());
 
-  /// Update the record with id [id]
-  /// The table is inferred through the [key] param
+  @override
   Future<bool> updateJson(String key, String id, Map<String, dynamic> json) => _collection(key)
           .doc(id)
           .set(json
             ..remove('id')
             ..remove('key'))
-          .then((_) => true)
-          .onError((error, stackTrace) {
+          .then((_) {
+        logger.info('Record $id of \'$key\' updated');
+        return true;
+      }).onError((error, stackTrace) {
         logger.severe('Error on update record $id in \'$key\'', error, stackTrace);
         return false;
       });
 
-  /// Update the record with id [id] using the [update] function.
-  /// The table is inferred through the [key] param.
+  @override
   Future<bool> functionalUpdate(
       String key, String id, Map<String, dynamic> Function(Map<String, dynamic>) update) async {
     var record = await getFromId(key, id);
@@ -64,20 +62,19 @@ class Persistence {
     return await updateJson(key, id, update(record!));
   }
 
-  /// Remove the record with id [id].
-  /// The table is inferred through the [key] param.
-  Future<bool> removeFromId(String key, String id) =>
-      _collection(key).doc(id).delete().then((_) => true).onError((error, stackTrace) {
+  @override
+  Future<bool> removeFromId(String key, String id) => _collection(key).doc(id).delete().then((_) {
+        logger.info('Removed record $id from \'$key\'');
+        return true;
+      }).onError((error, stackTrace) {
         logger.severe('Unable to remove record $id in \'$key\'', error, stackTrace);
         return false;
       });
 
-  /// Remove a [SerializableModel1] instance.
-  /// The table is inferred through the [key] param.
-  Future<bool> remove(SerializableModel object) => removeFromId(object.key, object.id);
+  @override
+  Future<bool> remove(String key, SerializableModel object) => removeFromId(key, object.id);
 
-  /// Remove all [SerializableModel1] instances that satisfy the predicate.
-  /// The table is inferred through the [key] param.
+  // @override
   // Future<void> removeWhere(
   //         String key, bool Function(Map<String, dynamic>) predicate) async =>
   //     await _store(key).delete(_db,
@@ -85,12 +82,7 @@ class Persistence {
   //           filter: Filter.custom((record) => predicate(record.value)),
   //         ));
 
-  /// =================
-  /// ==== QUERIES ====
-  /// =================
-
-  /// Return the record with id [id].
-  /// The table is inferred through the [key] param.
+  @override
   Future<Map<String, dynamic>?> getFromId(String key, String id) =>
       _collection(key).doc(id).get().then((result) {
         final data = result.data() as Map<String, dynamic>?;
@@ -103,10 +95,8 @@ class Persistence {
         return null;
       });
 
-  /// Return all records that satisfies the [query].
-  /// The table is inferred through the [key] param.
-  Future<List<Map<String, dynamic>>> getFromQuery(PersistenceQuery query) =>
-      query.toFirestoreQuery
+  @override
+  Future<List<Map<String, dynamic>>> getFromQuery(PersistenceQuery query) => query.toFirestoreQuery
           .get()
           .then((result) => result.docs.map((element) {
                 final data = element.data() as Map<String, dynamic>;

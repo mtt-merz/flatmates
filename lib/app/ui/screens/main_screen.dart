@@ -1,12 +1,10 @@
-import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
-import 'package:flatmates/app/ui/screens/expenses/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/home/home_page.dart';
 import 'package:flutter/material.dart';
 
 import 'chat/chat_page.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({this.initialPage = 1, Key? key}) : super(key: key);
+  const MainScreen({this.initialPage = 0, Key? key}) : super(key: key);
 
   final int initialPage;
 
@@ -17,8 +15,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late int page;
   late final PageController pageController;
-
-  final pages = const [HomePage(), ExpensesPage(), ChoresPage(), ChatPage()];
 
   @override
   void initState() {
@@ -39,7 +35,7 @@ class _MainScreenState extends State<MainScreen> {
         body: PageView(
           controller: pageController,
           onPageChanged: (page) => setState(() => this.page = page),
-          children: pages,
+          children: [HomePage(), const ChatPage()],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: page,
@@ -53,20 +49,10 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.home),
             ),
             BottomNavigationBarItem(
-              label: 'Expenses',
-              icon: Icon(Icons.euro),
-            ),
-            BottomNavigationBarItem(
-              label: 'Chores',
-              icon: Icon(Icons.cleaning_services),
-            ),
-            BottomNavigationBarItem(
               label: 'Messages',
               icon: Icon(Icons.chat),
             ),
           ],
         ),
       );
-
-  void onPageSwiped;
 }

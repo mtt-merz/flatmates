@@ -4,32 +4,19 @@ class CustomThemeData {
   final _scaffoldBackground = Colors.blueGrey[50];
   final _primary = ThemeData.light().primaryColor;
 
-  final _radius = 14.0;
+  final _radius = 50.0;
   final _horizontalPadding = 12.0;
 
   /// Text
   final _text = const TextTheme(
-    headline4: TextStyle(
-      fontWeight: FontWeight.w500,
-    ),
-    headline5: TextStyle(
-      fontWeight: FontWeight.w500,
-      color: Colors.black87,
-    ),
-    headline6: TextStyle(
-      fontWeight: FontWeight.w500,
-      fontSize: 18,
-    ),
-    subtitle1: TextStyle(
-      fontSize: 15,
-    ),
-    // bodyText2: const TextStyle(
-    //   fontSize: 16.0,
-    //   fontWeight: FontWeight.w500,
-    // ),
-    button: TextStyle(
-      fontWeight: FontWeight.bold,
-    ),
+    headline4: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.black),
+    headline5: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+    headline6: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.black87),
+    subtitle1: TextStyle(fontSize: 15),
+    bodyText1: TextStyle(fontSize: 18.0),
+    bodyText2: TextStyle(fontSize: 14.0),
+    button: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, letterSpacing: 1.25),
+    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.5),
   );
 
   /// AppBar
@@ -42,8 +29,7 @@ class CustomThemeData {
 
   /// Dialog
   get _dialog => DialogTheme(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(_radius))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_radius))),
         alignment: Alignment.bottomCenter,
       );
 
@@ -53,8 +39,7 @@ class CustomThemeData {
         elevation: 0.0,
         margin: EdgeInsets.symmetric(horizontal: _horizontalPadding)
             .add(const EdgeInsets.only(top: 12.0)),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(_radius))),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_radius))),
       );
 
   /// ListTile
@@ -68,14 +53,13 @@ class CustomThemeData {
         thickness: 2,
         color: _scaffoldBackground,
         space: 18,
-
       );
 
   /// OutlinedButton
   get _outlinedButton => OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           // visualDensity: VisualDensity.comfortable,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           elevation: 0,
           side: BorderSide(color: _primary, width: 1.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_radius)),
@@ -96,7 +80,10 @@ class CustomThemeData {
       ));
 
   /// TextButton
-  get _textButton => const TextButtonThemeData(style: ButtonStyle());
+  get _textButton => TextButtonThemeData(
+          style: ButtonStyle(
+        textStyle: MaterialStateProperty.all(_text.button?.copyWith(letterSpacing: .7)),
+      ));
 
   /// BottomSheet
   get _bottomSheet => const BottomSheetThemeData(
@@ -105,22 +92,14 @@ class CustomThemeData {
 
   /// InputDecoration
   get _inputDecoration {
-    final border = OutlineInputBorder(
-        borderSide: BorderSide.none,
-        borderRadius: BorderRadius.all(Radius.circular(_radius)));
-
-    return InputDecorationTheme(
+    return const InputDecorationTheme(
       isCollapsed: false,
-      border: border,
-      focusedBorder: border,
-      disabledBorder: border,
-      enabledBorder: border,
-      errorBorder: border,
-      focusedErrorBorder: border,
-      filled: true,
-      fillColor: _scaffoldBackground,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      border: OutlineInputBorder(
+        borderSide: BorderSide(),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      floatingLabelBehavior: FloatingLabelBehavior.never,
+      contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     );
   }
 
@@ -134,13 +113,13 @@ class CustomThemeData {
   /// BottomNavigationBar
   get _bottomNavigationBar => BottomNavigationBarThemeData(
         // type: BottomNavigationBarType.shifting,
-        showSelectedLabels: false,
         selectedItemColor: _primary,
         selectedIconTheme: const IconThemeData(size: 30),
         unselectedItemColor: _primary.withAlpha(150),
       );
 
   ThemeData get theme => ThemeData(
+        fontFamily: 'Mulish',
         androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
         scaffoldBackgroundColor: _scaffoldBackground,
         textTheme: _text,

@@ -6,31 +6,27 @@ import '../serializable_model.dart';
 
 part 'user.g.dart';
 
-const userKey = 'users';
-
 @JsonSerializable()
 class User extends SerializableModel {
-  @JsonKey()
-  String flat;
+  static const key = 'users';
 
   @JsonKey()
-  int colorValue;
+  String? flatId;
 
-  @JsonKey(ignore: true)
+  @JsonKey(required: true)
+  final int colorValue;
+
   Color get color => Color(colorValue);
 
   User(String id)
-      : flat = '',
-        colorValue = Colors.primaries[Random().nextInt(Colors.primaries.length)].value,
-        super.initFromId(id, userKey);
+      : colorValue = Colors.primaries[Random().nextInt(Colors.primaries.length)].value,
+        super(id);
 
   User._(
     String id,
-    DateTime createdAt,
-    DateTime updatedAt,
-    this.flat,
+    this.flatId,
     this.colorValue,
-  ) : super(id, userKey, createdAt, updatedAt);
+  ) : super(id);
 
   @override
   factory User.fromJson(json) => _$UserFromJson(json);

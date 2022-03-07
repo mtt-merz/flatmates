@@ -1,9 +1,10 @@
-import 'package:flatmates/app/blocs/flat_cubit.dart';
 import 'package:flatmates/app/models/flat/flat.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_common_space_widget.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_common_spaces_setter_dialog.dart';
+import 'package:flatmates/app/ui/screens/flat/flat_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 
 class FlatScreen extends StatefulWidget {
   const FlatScreen({Key? key}) : super(key: key);
@@ -13,28 +14,8 @@ class FlatScreen extends StatefulWidget {
 }
 
 class _FlatScreenState extends State<FlatScreen> {
-  late final FlatCubit cubit;
+  final FlatCubit cubit = GetIt.I<FlatCubit>();
   final TextEditingController titleController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    cubit = FlatCubit();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    cubit.close();
-  }
-
-  // Widget buildUserChip(User user) {
-  //   return ListTile(
-  //     title: Text(user.name, style: Theme.of(context).textTheme.subtitle2),
-  //     leading: CircleAvatar(backgroundColor: user.color),
-  //     horizontalTitleGap: 12,
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) => Scaffold(

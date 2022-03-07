@@ -2,10 +2,9 @@ import '../serializable_model.dart';
 
 part 'task.g.dart';
 
-const _key = 'tasks';
-
 @JsonSerializable()
 class Task extends SerializableModel {
+  static const key = 'tasks';
   @JsonKey(required: true)
   final String name;
 
@@ -27,18 +26,16 @@ class Task extends SerializableModel {
     required this.start,
     this.end,
   })  : done = false,
-        super.init(_key);
+        super.init(key);
 
   Task._(
     String id,
-    DateTime createdAt,
-    DateTime updatedAt,
     this.name,
     this.addresses,
     this.start,
     this.end,
     this.done,
-  ) : super(id, _key, createdAt, updatedAt);
+  ) : super(id);
 
   @override
   factory Task.fromJson(json) => _$TaskFromJson(json);

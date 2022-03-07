@@ -1,16 +1,16 @@
-import 'package:flatmates/app/models/flat/mate.dart';
+import 'package:flatmates/app/models/flat/mate/mate.dart';
 import 'package:flatmates/app/models/serializable_model.dart';
 
-import 'common_space.dart';
+import 'common_space/common_space.dart';
 
-export 'common_space.dart';
+export 'common_space/common_space.dart';
 
 part 'flat.g.dart';
 
-const flatKey = 'flats';
-
 @JsonSerializable()
 class Flat extends SerializableModel {
+  static const key = 'flats';
+
   @JsonKey(required: true)
   String? name;
 
@@ -23,16 +23,14 @@ class Flat extends SerializableModel {
   Flat()
       : mates = [],
         commonSpaces = [],
-        super.init(flatKey);
+        super.init(key);
 
   Flat._(
     String id,
-    DateTime createdAt,
-    DateTime updatedAt,
     this.name,
     this.mates,
     this.commonSpaces,
-  ) : super(id, flatKey, createdAt, updatedAt);
+  ) : super(id);
 
   @override
   factory Flat.fromJson(json) => _$FlatFromJson(json);

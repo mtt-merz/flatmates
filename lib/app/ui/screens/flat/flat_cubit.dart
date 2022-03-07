@@ -20,11 +20,9 @@ class Updated extends FlatCubitState {
 class FlatCubit extends Cubit<FlatCubitState> {
   late final Flat _flat;
 
-  FlatCubit() : super(Loading()) {
-    FlatRepository.instance.data.then((flat) => emit(Show(_flat)));
-  }
+  FlatCubit() : super(Loading());
 
-  void save() => FlatRepository.instance.update(_flat);
+  void save() {}
 
   void setName(String name) {
     if (name.isEmpty) return;

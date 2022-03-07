@@ -9,23 +9,19 @@ part of 'chore.dart';
 Chore _$ChoreFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['id', 'createdAt', 'title', 'description', 'user'],
+    requiredKeys: const ['id', 'title', 'description', 'mateIds'],
   );
   return Chore._(
     json['id'] as String,
-    DateTime.parse(json['createdAt'] as String),
-    DateTime.parse(json['updatedAt'] as String),
     json['title'] as String,
     json['description'] as String?,
-    (json['user'] as List<dynamic>).map((e) => e as String).toList(),
+    (json['mateIds'] as List<dynamic>).map((e) => e as String).toList(),
   );
 }
 
 Map<String, dynamic> _$ChoreToJson(Chore instance) => <String, dynamic>{
       'id': instance.id,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'title': instance.title,
       'description': instance.description,
-      'user': instance.user,
+      'mateIds': instance.mateIds,
     };
