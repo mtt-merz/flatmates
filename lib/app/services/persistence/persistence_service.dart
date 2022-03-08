@@ -1,51 +1,50 @@
 import 'package:flatmates/app/models/serializable_model.dart';
 import 'package:flatmates/app/services/service.dart';
 
-import 'firestore_wrapper.dart';
-
 abstract class PersistenceService implements Service {
-  /// Generate an unique ID for a generic collection.
-  String generateId(String key);
-
   /// Store [object] into the DB.
   /// The table is inferred through the [key] param.
-  Future<bool> insert(String key, SerializableModel object);
+  Future<void> insert(String key, SerializableModel object);
 
   /// Store the json [json] into the DB.
   /// The table is inferred through the [key] param.
-  Future<bool> insertJson(String key, String id, Map<String, dynamic> json);
+  Future<void> insertJson(String key, String id, Map<String, dynamic> json);
 
-  /// Update a [SerializableModel1] instance.
+  /// Update a [SerializableModel] instance.
   /// The table is inferred through the [key] param.
-  Future<bool> update(String key, SerializableModel object) =>
-      updateJson(key, object.id, object.toJson());
+  Future<void> update(String key, SerializableModel object);
 
   /// Update the record with id [id]
   /// The table is inferred through the [key] param
-  Future<bool> updateJson(String key, String id, Map<String, dynamic> json);
-
-  /// Update the record with id [id] using the [update] function.
-  /// The table is inferred through the [key] param.
-  Future<bool> functionalUpdate(
-      String key, String id, Map<String, dynamic> Function(Map<String, dynamic>) update);
+  Future<void> updateJson(String key, String id, Map<String, dynamic> json);
 
   /// Remove the record with id [id].
   /// The table is inferred through the [key] param.
-  Future<bool> removeFromId(String key, String id);
+  Future<void> removeFromId(String key, String id);
 
-  /// Remove a [SerializableModel1] instance.
+  /// Remove a [SerializableModel] instance.
   /// The table is inferred through the [key] param.
-  Future<bool> remove(String key, SerializableModel object);
+  Future<void> remove(String key, SerializableModel object);
 
-  /// Remove all [SerializableModel1] instances that satisfy the predicate.
+  /// Remove all [SerializableModel] instances that satisfy the predicate.
   /// The table is inferred through the [key] param.
-  // Future<void> removeWhere(String key, bool Function(Map<String, dynamic>) predicate);
+  Future<void> removeAll(String key);
 
   /// Return the record with id [id].
   /// The table is inferred through the [key] param.
   Future<Map<String, dynamic>?> getFromId(String key, String id);
 
-  /// Return all records that satisfies the [query].
-  /// The table is inferred through the [key] param.
-  Future<List<Map<String, dynamic>>> getFromQuery(PersistenceQuery query);
+  /// Return all records of the table inferred through the [key] param.
+  Future<List<Map<String, dynamic>>> getAll(String key);
+}
+
+class PersistenceServiceError {
+  final String action;
+  final String key;
+  final String? id;
+
+  PersistenceServiceError(this.action, this.key, this.id);
+
+  @override
+  String toString() => 'Error on ${action.toUpperCase()} record(s) $id in \'$key\'';
 }

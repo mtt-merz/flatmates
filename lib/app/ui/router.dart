@@ -1,5 +1,5 @@
 import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
-import 'package:flatmates/app/ui/screens/expenses/expenses_screen.dart';
+import 'package:flatmates/app/ui/screens/expenses/expenses_screen/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_screen.dart';
 import 'package:flatmates/app/ui/screens/main_screen.dart';
 import 'package:flutter/material.dart';

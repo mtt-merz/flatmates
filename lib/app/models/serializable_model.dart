@@ -1,6 +1,5 @@
-import 'package:flatmates/app/services/persistence/persistence_service.dart';
-import 'package:get_it/get_it.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 export 'package:json_annotation/json_annotation.dart';
 
@@ -11,7 +10,7 @@ abstract class SerializableModel implements _Serializable {
   @JsonKey(required: true)
   final String id;
 
-  SerializableModel.init(String key) : id = GetIt.I<PersistenceService>().generateId(key);
+  SerializableModel.init() : id = const Uuid().v4();
 
   SerializableModel(this.id);
 

@@ -1,5 +1,4 @@
 import 'package:flatmates/app/models/expense/expense.dart';
-import 'package:flatmates/app/ui/screens/expenses/add_expense_dialog.dart';
 import 'package:flatmates/app/ui/utils/printer.dart';
 import 'package:flatmates/app/ui/widget/page_template.dart';
 import 'package:flutter/material.dart';
@@ -39,31 +38,10 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: const PageTemplate(
+  Widget build(BuildContext context) => const Scaffold(
+        body: PageTemplate(
           title: 'Expenses',
-          children: [
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-            Card(child: ListTile(title: Text(''))),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {}
-              // showDialog(context: context, builder: (context) => const AddExpenseDialog()),
+          children: [],
         ),
       );
 

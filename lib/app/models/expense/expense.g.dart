@@ -9,13 +9,20 @@ part of 'expense.dart';
 Expense _$ExpenseFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
+    allowedKeys: const [
+      'id',
+      'amount',
+      'description',
+      'issuerId',
+      'addresseeIds',
+      'timestamp'
+    ],
     requiredKeys: const [
       'id',
       'amount',
       'description',
       'issuerId',
       'addresseeIds',
-      'flatId',
       'timestamp'
     ],
   );
@@ -25,7 +32,6 @@ Expense _$ExpenseFromJson(Map<String, dynamic> json) {
     json['description'] as String?,
     json['issuerId'] as String,
     (json['addresseeIds'] as List<dynamic>).map((e) => e as String).toList(),
-    json['flatId'] as String,
     DateTime.parse(json['timestamp'] as String),
   );
 }
@@ -36,6 +42,5 @@ Map<String, dynamic> _$ExpenseToJson(Expense instance) => <String, dynamic>{
       'description': instance.description,
       'issuerId': instance.issuerId,
       'addresseeIds': instance.addresseeIds,
-      'flatId': instance.flatId,
       'timestamp': instance.timestamp.toIso8601String(),
     };

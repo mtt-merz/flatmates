@@ -9,8 +9,6 @@ part 'flat.g.dart';
 
 @JsonSerializable()
 class Flat extends SerializableModel {
-  static const key = 'flats';
-
   @JsonKey(required: true)
   String? name;
 
@@ -20,17 +18,12 @@ class Flat extends SerializableModel {
   @JsonKey(required: true, defaultValue: [])
   List<CommonSpace> commonSpaces;
 
-  Flat()
-      : mates = [],
+  Flat({required Mate mate})
+      : mates = [mate],
         commonSpaces = [],
-        super.init(key);
+        super.init();
 
-  Flat._(
-    String id,
-    this.name,
-    this.mates,
-    this.commonSpaces,
-  ) : super(id);
+  Flat._(String id, this.name, this.mates, this.commonSpaces) : super(id);
 
   @override
   factory Flat.fromJson(json) => _$FlatFromJson(json);

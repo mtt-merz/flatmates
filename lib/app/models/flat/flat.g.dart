@@ -9,6 +9,7 @@ part of 'flat.dart';
 Flat _$FlatFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
+    allowedKeys: const ['id', 'name', 'mates', 'commonSpaces'],
     requiredKeys: const ['id', 'name', 'mates', 'commonSpaces'],
   );
   return Flat._(
@@ -25,6 +26,6 @@ Flat _$FlatFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$FlatToJson(Flat instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'mates': instance.mates,
-      'commonSpaces': instance.commonSpaces,
+      'mates': instance.mates.map((e) => e.toJson()).toList(),
+      'commonSpaces': instance.commonSpaces.map((e) => e.toJson()).toList(),
     };

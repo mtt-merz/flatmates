@@ -1,5 +1,5 @@
 import 'package:flatmates/app/ui/screens/authentication/authentication_cubit.dart';
-import 'package:flatmates/app/ui/screens/flat/init/flat_init_screen.dart';
+import 'package:flatmates/app/ui/screens/flat/init/initialize_flat_screen.dart';
 import 'package:flatmates/app/ui/screens/splash_screen.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +17,7 @@ class AuthenticationScreen extends StatelessWidget {
         if (!snapshot.hasData) return const SplashScreen();
 
         final authenticated = snapshot.data!;
-        if (authenticated) return FlatInitScreen();
+        if (authenticated) return InitializeFlatScreen();
 
         return Scaffold(
           body: Padding(

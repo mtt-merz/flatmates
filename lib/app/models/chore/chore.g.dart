@@ -9,6 +9,7 @@ part of 'chore.dart';
 Chore _$ChoreFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
+    allowedKeys: const ['id', 'title', 'description', 'mateIds'],
     requiredKeys: const ['id', 'title', 'description', 'mateIds'],
   );
   return Chore._(

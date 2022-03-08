@@ -1,3 +1,4 @@
+import 'package:flatmates/app/ui/screens/expenses/add_expense_dialog/add_expense_dialog.dart';
 import 'package:flatmates/app/ui/screens/home/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,16 +33,13 @@ class HomePage extends StatelessWidget {
                 delegate: SliverChildListDelegate([
               Card(
                 child: ListTile(
-                  title: const Text('Your next chores'),
-                  trailing: const Icon(Icons.keyboard_arrow_right),
-                  onTap: () => Navigator.of(context).pushNamed('chores'),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  title: const Text('Shopping list'),
-                  trailing: const Icon(Icons.keyboard_arrow_right),
-                  onTap: () => Navigator.of(context).pushNamed('chores'),
+                  title: const Text('Expenses'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () => showDialog(
+                        context: context, builder: (context) => const AddExpenseDialog()),
+                  ),
+                  onTap: () => Navigator.of(context).pushNamed('/expenses'),
                 ),
               ),
             ]))

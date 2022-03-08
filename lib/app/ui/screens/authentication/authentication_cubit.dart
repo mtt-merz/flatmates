@@ -11,7 +11,7 @@ class AuthenticationCubit extends Cubit<AsyncSnapshot<bool>> {
     _authentication.onAuthenticationChanges.listen((userId) async {
       if (userId == null) return emit(const AsyncSnapshot.withData(ConnectionState.active, false));
 
-      await GetIt.I<UserRepository>().load(userId);
+      GetIt.I<UserRepository>().load(userId);
       emit(const AsyncSnapshot.withData(ConnectionState.active, true));
     });
   }

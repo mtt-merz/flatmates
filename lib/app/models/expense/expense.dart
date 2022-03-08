@@ -4,8 +4,6 @@ part 'expense.g.dart';
 
 @JsonSerializable()
 class Expense extends SerializableModel {
-  static const key = 'expenses';
-
   @JsonKey(required: true)
   double amount;
 
@@ -19,19 +17,15 @@ class Expense extends SerializableModel {
   List<String> addresseeIds;
 
   @JsonKey(required: true)
-  final String flatId;
-
-  @JsonKey(required: true)
   final DateTime timestamp;
 
   Expense({
-    required this.flatId,
     required this.amount,
     this.description,
     required this.issuerId,
     required this.addresseeIds,
   })  : timestamp = DateTime.now(),
-        super.init(key);
+        super.init();
 
   Expense._(
     String id,
@@ -39,7 +33,6 @@ class Expense extends SerializableModel {
     this.description,
     this.issuerId,
     this.addresseeIds,
-    this.flatId,
     this.timestamp,
   ) : super(id);
 

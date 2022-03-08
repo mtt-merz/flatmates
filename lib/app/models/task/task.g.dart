@@ -9,6 +9,7 @@ part of 'task.dart';
 Task _$TaskFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
+    allowedKeys: const ['id', 'name', 'addresses', 'start', 'end', 'done'],
     requiredKeys: const ['id', 'name', 'addresses', 'start', 'done'],
   );
   return Task._(

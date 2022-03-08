@@ -17,3 +17,5 @@ mixin Repository<T> {
   @mustCallSuper
   void close() => _streamController.close();
 }
+
+class LoadRepositoryFailure {}

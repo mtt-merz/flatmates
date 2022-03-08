@@ -8,8 +8,6 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User extends SerializableModel {
-  static const key = 'users';
-
   @JsonKey()
   String? flatId;
 

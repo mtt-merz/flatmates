@@ -11,29 +11,33 @@ class FlatRepository with Repository<Flat> {
   Logger get logger => Logger(runtimeType.toString());
   static final _persistence = GetIt.I<PersistenceService>();
 
+  final String _key = 'flats';
+
   Future<void> load(String flatId) async {
-    final rawFlat = await _persistence.getFromId(Flat.key, flatId);
-    if (rawFlat != null) addEvent(Flat.fromJson(rawFlat));
+    final rawFlat = await _persistence.getFromId(_key, flatId);
+    if (rawFlat == null) throw LoadRepositoryFailure();
+
+    addEvent(Flat.fromJson(rawFlat));
   }
 
   Future<void> insert(Flat flat) async {
     addEvent(flat);
-    await _persistence.insert(Flat.key, flat);
+    await _persistence.insert(_key, flat);
   }
 
-  Future<void> update(Flat flat) async {
-    addEvent(flat);
-    await _persistence.update(Flat.key, flat);
-  }
+  Future<void> update(Flat Function(Flat) updater) async =>
+      _persistence.update(_key, updater(await data));
 
-  Future<void> remove() async => _persistence.remove(Flat.key, await data);
+  Future<void> remove() async => _persistence.remove(_key, await data);
 
-  Future<void> disconnectMate(String userId) async {
+  // TODO: put this method into a cubit
+  Future<void> removeMate(String userId) async {
     data.then((flat) {
-      flat.mates.singleWhere((mate) => mate.userId == userId).userId = null;
-
-      // If there are no more connected mates, remove the flat
-      if (!flat.mates.any((element) => element.userId != null)) remove();
+      flat.mates.removeWhere((mate) => mate.userId == userId);
+      if (flat.mates.isEmpty)
+        remove();
+      else
+        update((flat) => flat);
     });
   }
 }

@@ -1,10 +1,10 @@
-part of 'flat_init_screen.dart';
+part of 'initialize_flat_screen.dart';
 
-class JoinFlatPage extends StatelessWidget {
+class _SetFlatPage extends StatelessWidget {
   final void Function(String) onJoinFlat;
   final void Function() onCreateFlat;
 
-  JoinFlatPage({Key? key, required this.onJoinFlat, required this.onCreateFlat}) : super(key: key);
+  _SetFlatPage({Key? key, required this.onJoinFlat, required this.onCreateFlat}) : super(key: key);
 
   final controller = TextEditingController();
 
@@ -18,7 +18,7 @@ class JoinFlatPage extends StatelessWidget {
               textAlign: TextAlign.start, style: Theme.of(context).textTheme.headline4),
           const SizedBox(height: 8),
           const Text('Enter the invitation code to join an existent flat'),
-          TextInputFieldContainer(
+          TextFieldContainer(
             padding: const EdgeInsets.symmetric(vertical: 24),
             label: 'INVITATION CODE',
             field: TextField(

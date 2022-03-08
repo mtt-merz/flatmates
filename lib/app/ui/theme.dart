@@ -4,7 +4,7 @@ class CustomThemeData {
   final _scaffoldBackground = Colors.blueGrey[50];
   final _primary = ThemeData.light().primaryColor;
 
-  final _radius = 50.0;
+  final _radius = 30.0;
   final _horizontalPadding = 12.0;
 
   /// Text
@@ -15,8 +15,8 @@ class CustomThemeData {
     subtitle1: TextStyle(fontSize: 15),
     bodyText1: TextStyle(fontSize: 18.0),
     bodyText2: TextStyle(fontSize: 14.0),
-    button: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, letterSpacing: 1.25),
-    labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.5),
+    button: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+    labelMedium: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
   );
 
   /// AppBar

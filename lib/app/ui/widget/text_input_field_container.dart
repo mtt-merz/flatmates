@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TextInputFieldContainer extends StatelessWidget {
+class TextFieldContainer extends StatelessWidget {
   final TextField field;
   final EdgeInsets padding;
   final String? label;
 
-  const TextInputFieldContainer({
+  const TextFieldContainer({
     Key? key,
     required this.field,
     this.label,

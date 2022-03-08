@@ -4,8 +4,6 @@ part 'chore.g.dart';
 
 @JsonSerializable()
 class Chore extends SerializableModel {
-  static const key = 'chores';
-
   @JsonKey(required: true)
   final String title;
 
@@ -15,7 +13,7 @@ class Chore extends SerializableModel {
   @JsonKey(required: true)
   final List<String> mateIds;
 
-  Chore({required this.title, this.description, required this.mateIds}) : super.init(key);
+  Chore({required this.title, this.description, required this.mateIds}) : super.init();
 
   Chore._(
     String id,

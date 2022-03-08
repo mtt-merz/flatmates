@@ -4,7 +4,6 @@ part 'task.g.dart';
 
 @JsonSerializable()
 class Task extends SerializableModel {
-  static const key = 'tasks';
   @JsonKey(required: true)
   final String name;
 
@@ -20,22 +19,11 @@ class Task extends SerializableModel {
   @JsonKey(required: true)
   bool done;
 
-  Task({
-    required this.name,
-    required this.addresses,
-    required this.start,
-    this.end,
-  })  : done = false,
-        super.init(key);
+  Task({required this.name, required this.addresses, required this.start, this.end})
+      : done = false,
+        super.init();
 
-  Task._(
-    String id,
-    this.name,
-    this.addresses,
-    this.start,
-    this.end,
-    this.done,
-  ) : super(id);
+  Task._(String id, this.name, this.addresses, this.start, this.end, this.done) : super(id);
 
   @override
   factory Task.fromJson(json) => _$TaskFromJson(json);

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flatmates/app/models/serializable_model.dart';
 import 'package:flatmates/app/repositories/repository.dart';
-import 'package:flatmates/app/services/persistence/firestore_wrapper.dart';
 import 'package:flatmates/app/services/persistence/persistence_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart' show Logger;
@@ -11,44 +10,37 @@ abstract class RepositoryCollection<T extends SerializableModel> with Repository
   Logger get _logger => Logger(runtimeType.toString());
   static final _persistence = GetIt.I<PersistenceService>();
 
-  final PersistenceQuery query;
-  final String key;
-
+  /// Build a [T] instance starting from a json value
   final T Function(Map<String, dynamic>) builder;
+
+  RepositoryCollection({required this.builder});
+
+  late String key;
+
+  Future<void> load(String key) async {
+    final rawData = await _persistence.getAll(key);
+    objects = rawData.map(builder).toList();
+    _logger.info('Found ${objects.length} $key');
+
+    addEvent(objects);
+  }
 
   late final List<T> objects;
 
-  RepositoryCollection({required this.key, required this.query, required this.builder}) {
-    _persistence.getFromQuery(query).then((result) {
-      objects = result.map(builder).toList();
-      _logger.info('Found ${objects.length} ${query.key}');
-
-      addEvent(objects);
-    });
-  }
-
-  void refresh();
-
   Future<void> insert(T object) async {
-    final result = await _persistence.insert(key, object);
-    if (!result) return _logger.warning('Unable to insert $object');
-
     addEvent(objects..add(object));
+    return _persistence.insert(key, object);
   }
 
   Future<void> update(T object) async {
-    final result = await _persistence.update(key, object);
-    if (!result) return _logger.warning('Unable to update $object');
-
     addEvent(objects
       ..remove(object)
       ..add(object));
+    return _persistence.update(key, object);
   }
 
-  Future<void> delete(T object) async {
-    final result = await _persistence.remove(key, object);
-    if (!result) return _logger.warning('Unable to delete $object');
-
+  Future<void> remove(T object) async {
     addEvent(objects..remove(object));
+    _persistence.remove(key, object);
   }
 }

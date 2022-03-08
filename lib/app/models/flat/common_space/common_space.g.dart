@@ -9,6 +9,7 @@ part of 'common_space.dart';
 CommonSpace _$CommonSpaceFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
+    allowedKeys: const ['name', 'colorValue'],
     requiredKeys: const ['name', 'colorValue'],
   );
   return CommonSpace._(

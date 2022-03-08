@@ -12,7 +12,7 @@ class HomeCubit extends Cubit<AsyncSnapshot> {
 
   void logout() async {
     final user = await _userRepository.data;
-    await GetIt.I<FlatRepository>().disconnectMate(user.id);
+    await GetIt.I<FlatRepository>().removeMate(user.id);
     await _userRepository.remove();
 
     GetIt.I<AuthenticationService>().deleteAccount();

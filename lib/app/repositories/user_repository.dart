@@ -8,16 +8,17 @@ export 'package:flatmates/app/models/user/user.dart';
 
 class UserRepository with Repository<User> {
   Logger get logger => Logger(runtimeType.toString());
-
   final _persistence = GetIt.I<PersistenceService>();
 
-  Future<void> load(String userId) async {
-    final rawUser = await _persistence.getFromId(User.key, userId);
+  final String _key = 'users';
+
+  void load(String userId) async {
+    final rawUser = await _persistence.getFromId(_key, userId);
     if (rawUser != null) return addEvent(User.fromJson(rawUser));
 
     // No stored user instance: create and store a new one
     final user = User(userId);
-    await _persistence.update(User.key, user);
+    await _persistence.update(_key, user);
 
     return addEvent(user);
   }
@@ -26,8 +27,8 @@ class UserRepository with Repository<User> {
     final user = updater(await data);
 
     addEvent(user);
-    await _persistence.update(User.key, user);
+    await _persistence.update(_key, user);
   }
 
-  Future<void> remove() async => _persistence.remove(User.key, await data);
+  Future<void> remove() async => _persistence.remove(_key, await data);
 }
