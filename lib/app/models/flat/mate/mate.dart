@@ -7,16 +7,21 @@ part 'mate.g.dart';
 @JsonSerializable()
 class Mate {
   @JsonKey(required: true)
-  String userId;
+  final String userId;
 
   @JsonKey(required: true)
   String name;
 
-  Mate(this.userId, {required this.name});
+  @JsonKey(required: true)
+  int colorValue;
 
-  Mate._(this.userId, this.name);
+  Mate(this.userId, {required this.name, required this.colorValue});
+
+  Mate._(this.userId, this.name, this.colorValue);
 
   factory Mate.fromJson(json) => _$MateFromJson(json);
 
   Map<String, dynamic> toJson() => _$MateToJson(this);
+
+  Mate clone() => Mate._(userId, name, colorValue);
 }

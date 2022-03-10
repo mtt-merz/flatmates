@@ -9,7 +9,9 @@ mixin Repository<T> {
 
   Stream<T> get stream => _streamController.stream;
 
-  Future<T> get data => _streamController.first;
+  bool get hasValue => _streamController.hasValue;
+
+  T get value => _streamController.value;
 
   @protected
   void addEvent(T event) => _streamController.add(event);

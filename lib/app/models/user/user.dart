@@ -1,7 +1,3 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
-
 import '../serializable_model.dart';
 
 part 'user.g.dart';
@@ -11,27 +7,13 @@ class User extends SerializableModel {
   @JsonKey()
   String? flatId;
 
-  @JsonKey(required: true)
-  final int colorValue;
+  User(String id) : super(id);
 
-  Color get color => Color(colorValue);
-
-  User(String id)
-      : colorValue = Colors.primaries[Random().nextInt(Colors.primaries.length)].value,
-        super(id);
-
-  User._(
-    String id,
-    this.flatId,
-    this.colorValue,
-  ) : super(id);
+  User._(String id, this.flatId) : super(id);
 
   @override
   factory User.fromJson(json) => _$UserFromJson(json);
 
   @override
   Map<String, dynamic> toJson() => _$UserToJson(this);
-
-  @override
-  String toString() => 'USER $id';
 }

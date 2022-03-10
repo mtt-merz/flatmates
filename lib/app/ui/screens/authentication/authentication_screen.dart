@@ -20,8 +20,9 @@ class AuthenticationScreen extends StatelessWidget {
         if (authenticated) return InitializeFlatScreen();
 
         return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
           body: Padding(
-            padding: SizeUtils.of(context).defaultPadding,
+            padding: SizeUtils.of(context).screenPadding,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -37,7 +38,7 @@ class AuthenticationScreen extends StatelessWidget {
 
                 // Sign in button
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Text('Already have an account?'),
+                  const Text('Already have an profile?'),
                   TextButton(
                     child: const Text('Login'),
                     onPressed: cubit.signIn,

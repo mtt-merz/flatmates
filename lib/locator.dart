@@ -6,10 +6,12 @@ import 'package:flatmates/app/services/authentication/firebase_auth_wrapper.dart
 import 'package:flatmates/app/services/persistence/firestore_wrapper.dart';
 import 'package:flatmates/app/services/persistence/persistence_service.dart';
 import 'package:flatmates/app/services/service.dart';
-import 'package:flatmates/app/ui/screens/expenses/add_expense_dialog/add_expense_cubit.dart';
+import 'package:flatmates/app/ui/screens/expenses/expense_adder/expense_adder_cubit.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_cubit.dart';
 import 'package:flatmates/app/ui/screens/flat/init/initialize_flat_cubit.dart';
 import 'package:flatmates/app/ui/screens/home/home_cubit.dart';
+import 'package:flatmates/app/ui/screens/profile/editor/profile_editor_cubit.dart';
+import 'package:flatmates/app/ui/screens/profile/profile_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 class Locator {
@@ -32,8 +34,10 @@ class Locator {
   void _registerCubits() {
     _getIt.registerFactory(() => FlatCubit());
     _getIt.registerFactory(() => InitializeFlatCubit());
+    _getIt.registerFactory(() => ProfileEditorCubit());
     _getIt.registerFactory(() => HomeCubit());
-    _getIt.registerFactory(() => AddExpenseCubit());
+    _getIt.registerFactory(() => ExpenseAdderCubit());
+    _getIt.registerFactory(() => ProfileCubit());
   }
 
   void _registerRepository<R extends Repository>(R repository) =>

@@ -10,7 +10,7 @@ class _SetFlatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-      padding: SizeUtils.of(context).defaultPadding,
+      padding: SizeUtils.of(context).screenPadding,
       child: ListView(
         children: [
           // Join flat
@@ -18,10 +18,10 @@ class _SetFlatPage extends StatelessWidget {
               textAlign: TextAlign.start, style: Theme.of(context).textTheme.headline4),
           const SizedBox(height: 8),
           const Text('Enter the invitation code to join an existent flat'),
-          TextFieldContainer(
+          FieldContainer(
             padding: const EdgeInsets.symmetric(vertical: 24),
             label: 'INVITATION CODE',
-            field: TextField(
+            child: TextField(
               controller: controller,
               decoration: const InputDecoration(hintText: '000 000 00'),
             ),

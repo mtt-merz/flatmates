@@ -5,24 +5,18 @@ import 'package:flatmates/app/repositories/user_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
-class AddExpenseCubit extends Cubit<Expense?> {
-  late final User _user;
-  late final Flat _flat;
+class ExpenseAdderCubit extends Cubit<Expense?> {
+  ExpenseAdderCubit() : super(_defaultExpense);
 
-  AddExpenseCubit() : super(null) {
-    _defaultExpense.then(emit);
-  }
+  static User get _user => GetIt.I<UserRepository>().value;
 
-  Future<Expense> get _defaultExpense async {
-    _user = await GetIt.I<UserRepository>().data;
-    _flat = await GetIt.I<FlatRepository>().data;
+  static Flat get _flat => GetIt.I<FlatRepository>().value;
 
-    return Expense(
-      amount: 0,
-      issuerId: _user.id,
-      addresseeIds: _flat.mates.map((e) => e.name).toList(),
-    );
-  }
+  static final Expense _defaultExpense = Expense(
+    amount: 0,
+    issuerId: _user.id,
+    addresseeIds: _flat.mates.map((e) => e.name).toList(),
+  );
 
   late Expense _expense;
 
@@ -44,5 +38,5 @@ class AddExpenseCubit extends Cubit<Expense?> {
 
   List<Mate> get mates => [..._flat.mates];
 
-  bool get canSubmit => _expense.amount > 0 && _expense.addresseeIds.isNotEmpty;
+  bool get canSubmit => true;//_expense.amount > 0 && _expense.addresseeIds.isNotEmpty;
 }

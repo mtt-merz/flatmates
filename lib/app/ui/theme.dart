@@ -4,42 +4,52 @@ class CustomThemeData {
   final _scaffoldBackground = Colors.blueGrey[50];
   final _primary = ThemeData.light().primaryColor;
 
-  final _radius = 30.0;
-  final _horizontalPadding = 12.0;
+  final _buttonRadius = 30.0;
+  final _cardRadius = 15.0;
+  final _horizontalPadding = 14.0;
 
   /// Text
   final _text = const TextTheme(
     headline4: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.black),
     headline5: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-    headline6: TextStyle(fontSize: 18, fontWeight: FontWeight.w500, color: Colors.black87),
+    headline6: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
     subtitle1: TextStyle(fontSize: 15),
-    bodyText1: TextStyle(fontSize: 18.0),
+    bodyText1: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w800),
     bodyText2: TextStyle(fontSize: 14.0),
     button: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.25),
-    labelMedium: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+    // labelLarge: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1),
+    labelMedium: TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1,
+      color: Colors.black87,
+    ),
   );
 
   /// AppBar
   get _appBar => AppBarTheme(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        titleTextStyle: _text.headline6!.copyWith(color: Colors.black87),
+        elevation: 0,
+        titleSpacing: 0,
+        backgroundColor: Colors.white,
+        titleTextStyle: _text.headline6!.copyWith(fontFamily: 'Mulish'),
         iconTheme: const IconThemeData(color: Colors.black87),
       );
 
   /// Dialog
   get _dialog => DialogTheme(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_radius))),
-        alignment: Alignment.bottomCenter,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(_buttonRadius)),
+        ),
+        alignment: Alignment.topCenter,
+        elevation: 0,
       );
 
   /// Card
   get _card => CardTheme(
         color: Colors.white,
         elevation: 0.0,
-        margin: EdgeInsets.symmetric(horizontal: _horizontalPadding)
-            .add(const EdgeInsets.only(top: 12.0)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_radius))),
+        margin: const EdgeInsets.only(top: 12.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_cardRadius))),
       );
 
   /// ListTile
@@ -49,11 +59,7 @@ class CustomThemeData {
       );
 
   /// Divider
-  get _divider => DividerThemeData(
-        thickness: 2,
-        color: _scaffoldBackground,
-        space: 18,
-      );
+  get _divider => const DividerThemeData(thickness: 1, color: Colors.black26, space: 1);
 
   /// OutlinedButton
   get _outlinedButton => OutlinedButtonThemeData(
@@ -62,7 +68,7 @@ class CustomThemeData {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           elevation: 0,
           side: BorderSide(color: _primary, width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_radius)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_buttonRadius)),
           minimumSize: const Size(100, 0),
           textStyle: _text.button!,
         ),
@@ -94,10 +100,8 @@ class CustomThemeData {
   get _inputDecoration {
     return const InputDecorationTheme(
       isCollapsed: false,
-      border: OutlineInputBorder(
-        borderSide: BorderSide(),
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
+      border: OutlineInputBorder(),
+      focusColor: Colors.black54,
       floatingLabelBehavior: FloatingLabelBehavior.never,
       contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     );
@@ -112,10 +116,13 @@ class CustomThemeData {
 
   /// BottomNavigationBar
   get _bottomNavigationBar => BottomNavigationBarThemeData(
-        // type: BottomNavigationBarType.shifting,
+        type: BottomNavigationBarType.shifting,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         selectedItemColor: _primary,
-        selectedIconTheme: const IconThemeData(size: 30),
-        unselectedItemColor: _primary.withAlpha(150),
+        selectedIconTheme: const IconThemeData(size: 25),
+        unselectedIconTheme: const IconThemeData(size: 25),
+        unselectedItemColor: Colors.black38,
       );
 
   ThemeData get theme => ThemeData(

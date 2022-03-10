@@ -3,14 +3,14 @@ import 'package:flatmates/app/ui/utils/printer.dart';
 import 'package:flatmates/app/ui/widget/page_template.dart';
 import 'package:flutter/material.dart';
 
-class ExpensesScreen extends StatefulWidget {
-  const ExpensesScreen({Key? key}) : super(key: key);
+class ExpensesPage extends StatefulWidget {
+  const ExpensesPage({Key? key}) : super(key: key);
 
   @override
-  _ExpensesScreenState createState() => _ExpensesScreenState();
+  _ExpensesPageState createState() => _ExpensesPageState();
 }
 
-class _ExpensesScreenState extends State<ExpensesScreen> {
+class _ExpensesPageState extends State<ExpensesPage> {
   Widget buildExpensesDiaryWidget(List<List<Expense>> expensesDiary) {
     if (expensesDiary.isEmpty) return const Text('No expenses added');
 

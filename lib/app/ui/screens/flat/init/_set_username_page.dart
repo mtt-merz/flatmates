@@ -14,19 +14,19 @@ class _SetUsernamePageState extends State<_SetUsernamePage> {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: SizeUtils.of(context).defaultPadding,
+        padding: SizeUtils.of(context).screenPadding,
         child: ListView(
           children: [
-            Text('Your profile',
+            Text('Your editor',
                 textAlign: TextAlign.start, style: Theme.of(context).textTheme.headline5),
             const SizedBox(height: 8),
             const Text('You will be able to change those info later'),
 
             // Username
-            TextFieldContainer(
+            FieldContainer(
                 label: 'USERNAME*',
                 padding: EdgeInsets.symmetric(vertical: SizeUtils.of(context).getScaledHeight(3)),
-                field: TextField(
+                child: TextField(
                   controller: controller,
                   textCapitalization: TextCapitalization.words,
                 )),

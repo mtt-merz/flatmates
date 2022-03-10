@@ -2,6 +2,8 @@ import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
 import 'package:flatmates/app/ui/screens/expenses/expenses_screen/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_screen.dart';
 import 'package:flatmates/app/ui/screens/main_screen.dart';
+import 'package:flatmates/app/ui/screens/profile/editor/profile_editor_dialog.dart';
+import 'package:flatmates/app/ui/screens/profile/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class CustomRouter {
@@ -15,14 +17,18 @@ class CustomRouter {
       case '/':
         return buildRoute((_) => const MainScreen());
       case '/expenses':
-        return buildRoute((_) => const ExpensesScreen());
-      case '/chores':
-        return buildRoute((_) => const ChoresScreen());
-      case '/flat':
-        return buildRoute((_) => const FlatScreen());
-      case '/expense/detail':
+        return buildRoute((_) => const ExpensesPage());
+      case '/expenses/detail':
         // TODO: fix this
         return buildRoute((_) => const MainScreen());
+      case '/chores':
+        return buildRoute((_) => const ChoresPage());
+      case '/flat':
+        return buildRoute((_) => const FlatScreen());
+      case '/profile':
+        return buildRoute((_) => ProfilePage());
+      case '/profile/editor':
+        return buildRoute((_) => const ProfileEditorDialog());
 
       default:
         throw Exception('The route \'${routeSettings.name}\' does not exists');

@@ -25,7 +25,7 @@ class CardColumn extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(title!, style: Theme.of(context).textTheme.subtitle2),
+                Text(title!, style: Theme.of(context).textTheme.labelMedium),
                 action ?? const SizedBox(),
               ],
             ),

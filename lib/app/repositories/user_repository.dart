@@ -12,7 +12,7 @@ class UserRepository with Repository<User> {
 
   final String _key = 'users';
 
-  void load(String userId) async {
+  void init(String userId) async {
     final rawUser = await _persistence.getFromId(_key, userId);
     if (rawUser != null) return addEvent(User.fromJson(rawUser));
 
@@ -23,12 +23,10 @@ class UserRepository with Repository<User> {
     return addEvent(user);
   }
 
-  Future<void> update(User Function(User) updater) async {
-    final user = updater(await data);
-
+  Future<void> update(User user) {
     addEvent(user);
-    await _persistence.update(_key, user);
+    return _persistence.update(_key, user);
   }
 
-  Future<void> remove() async => _persistence.remove(_key, await data);
+  Future<void> remove() async => _persistence.remove(_key, value);
 }

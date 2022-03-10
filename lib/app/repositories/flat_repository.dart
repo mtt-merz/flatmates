@@ -13,31 +13,27 @@ class FlatRepository with Repository<Flat> {
 
   final String _key = 'flats';
 
-  Future<void> load(String flatId) async {
+  void init(String flatId) async {
     final rawFlat = await _persistence.getFromId(_key, flatId);
     if (rawFlat == null) throw LoadRepositoryFailure();
 
     addEvent(Flat.fromJson(rawFlat));
   }
 
-  Future<void> insert(Flat flat) async {
+  Future<void> insert(Flat flat) {
     addEvent(flat);
-    await _persistence.insert(_key, flat);
+    return _persistence.insert(_key, flat);
   }
 
-  Future<void> update(Flat Function(Flat) updater) async =>
-      _persistence.update(_key, updater(await data));
+  Future<void> update(Flat Function(Flat) updater) {
+    final flat = updater(value);
 
-  Future<void> remove() async => _persistence.remove(_key, await data);
+    addEvent(flat);
+    return _persistence.update(_key, flat);
+  }
 
-  // TODO: put this method into a cubit
-  Future<void> removeMate(String userId) async {
-    data.then((flat) {
-      flat.mates.removeWhere((mate) => mate.userId == userId);
-      if (flat.mates.isEmpty)
-        remove();
-      else
-        update((flat) => flat);
-    });
+  Future<void> remove() {
+    // addEvent(null);
+    return _persistence.remove(_key, value);
   }
 }

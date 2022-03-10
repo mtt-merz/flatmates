@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flatmates/app/models/serializable_model.dart';
 import 'package:flatmates/app/repositories/repository.dart';
 import 'package:flatmates/app/services/persistence/persistence_service.dart';
+import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart' show Logger;
 
@@ -17,6 +18,9 @@ abstract class RepositoryCollection<T extends SerializableModel> with Repository
 
   late String key;
 
+  void fetch();
+
+  @protected
   Future<void> load(String key) async {
     final rawData = await _persistence.getAll(key);
     objects = rawData.map(builder).toList();

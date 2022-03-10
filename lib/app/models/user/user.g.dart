@@ -9,18 +9,16 @@ part of 'user.dart';
 User _$UserFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    allowedKeys: const ['id', 'flatId', 'colorValue'],
-    requiredKeys: const ['id', 'colorValue'],
+    allowedKeys: const ['id', 'flatId'],
+    requiredKeys: const ['id'],
   );
   return User._(
     json['id'] as String,
     json['flatId'] as String?,
-    json['colorValue'] as int,
   );
 }
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
       'flatId': instance.flatId,
-      'colorValue': instance.colorValue,
     };

@@ -12,6 +12,6 @@ abstract class AuthenticationService implements Service {
   /// Log out the user
   void signOut();
 
-  /// Delete user account
+  /// Delete user profile
   void deleteAccount();
 }
