@@ -13,6 +13,8 @@ mixin Repository<T> {
 
   T get value => _streamController.value;
 
+  T? get valueOrNull => _streamController.valueOrNull;
+
   @protected
   void addEvent(T event) => _streamController.add(event);
 

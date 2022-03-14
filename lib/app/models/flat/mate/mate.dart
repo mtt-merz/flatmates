@@ -7,15 +7,15 @@ part 'mate.g.dart';
 @JsonSerializable()
 class Mate {
   @JsonKey(required: true)
-  final String userId;
+  String name;
 
   @JsonKey(required: true)
-  String name;
+  final String userId;
 
   @JsonKey(required: true)
   int colorValue;
 
-  Mate(this.userId, {required this.name, required this.colorValue});
+  Mate(this.name, {required this.userId, required this.colorValue});
 
   Mate._(this.userId, this.name, this.colorValue);
 

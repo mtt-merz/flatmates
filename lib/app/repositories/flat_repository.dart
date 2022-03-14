@@ -13,7 +13,7 @@ class FlatRepository with Repository<Flat> {
 
   final String _key = 'flats';
 
-  void init(String flatId) async {
+  Future<void> init(String flatId) async {
     final rawFlat = await _persistence.getFromId(_key, flatId);
     if (rawFlat == null) throw LoadRepositoryFailure();
 

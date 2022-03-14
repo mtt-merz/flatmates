@@ -1,4 +1,3 @@
-import 'package:flatmates/app/ui/screens/profile/editor/profile_editor_dialog.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flatmates/app/ui/widget/card_column.dart';
 import 'package:flatmates/app/ui/widget/card_emphasis.dart';
@@ -20,74 +19,78 @@ class ProfilePage extends StatelessWidget {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
 
         return Scaffold(
-            body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              expandedHeight: 120,
-              foregroundColor: Colors.amber,
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsetsDirectional.only(start: 24, bottom: 16.0),
-                title: Row(
-                  children: [
-                    CircleAvatar(backgroundColor: cubit.mateColor, radius: 5),
-                    const SizedBox(width: 10),
-                    Text(cubit.mateName, style: Theme.of(context).textTheme.headline6),
-                  ],
-                ),
-              ),
-              actions: [
-
-                PopupMenuButton<int>(
-                    onSelected: (int index) {
-                      switch (index) {
-                        case 0:
-                          Navigator.of(context).pushNamed('/profile/editor');
-                      }
-                    },
-                    itemBuilder: (context) => <PopupMenuEntry<int>>[
-                          buildPopupMenuItem(
-                            content: const Text('Edit profile'),
-                            icon: const Icon(Icons.edit),
-                            index: 0,
-                          ),
-                          buildPopupMenuItem(
-                            content: const Text('Set color'),
-                            icon: const Icon(Icons.color_lens),
-                            index: 1,
-                          ),
-                        ]),
-              ],
-            ),
-            SliverPadding(
-              padding: SizeUtils.of(context).basePadding,
-              sliver: SliverList(
-                delegate: SliverChildListDelegate.fixed([
-                  CardEmphasis(
-                    title: 'Register an account!',
-                    subtitle:
-                        'Right now, if you logout or uninstall the app, you will lose all your data',
-                    onTap: () {},
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: 120,
+                foregroundColor: Colors.amber,
+                flexibleSpace: FlexibleSpaceBar(
+                  titlePadding: const EdgeInsetsDirectional.only(start: 24, bottom: 16.0),
+                  title: Row(
+                    children: [
+                      CircleAvatar(backgroundColor: cubit.mateColor, radius: 5),
+                      const SizedBox(width: 10),
+                      Text(cubit.mateName, style: Theme.of(context).textTheme.titleSmall),
+                    ],
                   ),
-                  // const Divider(),
-                  CardColumn(children: [
-                    SettingTile(
-                      title: const Text('Leave flat'),
-                      subtitle: const Text(
-                          'If there are no more mates in the flat, it will be automatically deleted'),
-                      icon: const Icon(Icons.home),
-                      onTap: cubit.leaveFlat,
-                    ),
-                    SettingTile(
-                        title: const Text('Delete profile'),
-                        icon: const Icon(Icons.delete),
-                        onTap: cubit.deleteAccount),
-                  ])
-                ]),
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.login),
+                    onPressed: () => Navigator.of(context).pushNamed('/authentication/sign_up'),
+                  ),
+                  PopupMenuButton<int>(
+                      onSelected: (int index) {
+                        switch (index) {
+                          case 0:
+                            Navigator.of(context).pushNamed('/profile/editor');
+                        }
+                      },
+                      itemBuilder: (context) => <PopupMenuEntry<int>>[
+                            buildPopupMenuItem(
+                              content: const Text('Edit profile'),
+                              icon: const Icon(Icons.edit),
+                              index: 0,
+                            ),
+                            buildPopupMenuItem(
+                              content: const Text('Set color'),
+                              icon: const Icon(Icons.color_lens),
+                              index: 1,
+                            ),
+                          ]),
+                ],
               ),
-            )
-          ],
-        ));
+              SliverPadding(
+                padding: SizeUtils.of(context).basePadding,
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate.fixed([
+                    CardEmphasis(
+                      title: 'Register an account!',
+                      subtitle:
+                          'Right now, if you logout or uninstall the app, you will lose all your data',
+                      onTap: () {},
+                    ),
+                    // const Divider(),
+                    CardColumn(children: [
+                      SettingTile(
+                        title: const Text('Leave flat'),
+                        subtitle: const Text(
+                            'If there are no more mates in the flat, it will be automatically deleted'),
+                        icon: const Icon(Icons.home),
+                        onTap: cubit.leaveFlat,
+                      ),
+                      SettingTile(
+                          title: const Text('Delete profile'),
+                          icon: const Icon(Icons.delete),
+                          onTap: cubit.deleteAccount),
+                    ])
+                  ]),
+                ),
+              )
+            ],
+          ),
+        );
       });
 
   PopupMenuEntry<int> buildPopupMenuItem({

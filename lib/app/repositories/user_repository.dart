@@ -12,15 +12,16 @@ class UserRepository with Repository<User> {
 
   final String _key = 'users';
 
-  void init(String userId) async {
+  Future<void> init(String userId) async {
     final rawUser = await _persistence.getFromId(_key, userId);
-    if (rawUser != null) return addEvent(User.fromJson(rawUser));
+    if (rawUser == null) throw LoadRepositoryFailure();
 
-    // No stored user instance: create and store a new one
-    final user = User(userId);
-    await _persistence.update(_key, user);
+    addEvent(User.fromJson(rawUser));
+  }
 
-    return addEvent(user);
+  Future<void> insert(User user) {
+    addEvent(user);
+    return _persistence.insert(_key, user);
   }
 
   Future<void> update(User user) {

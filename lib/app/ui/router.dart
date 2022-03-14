@@ -1,3 +1,4 @@
+import 'package:flatmates/app/ui/screens/authentication/sign/sign_up_screen.dart';
 import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
 import 'package:flatmates/app/ui/screens/expenses/expenses_screen/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/flat/flat_screen.dart';
@@ -29,6 +30,10 @@ class CustomRouter {
         return buildRoute((_) => ProfilePage());
       case '/profile/editor':
         return buildRoute((_) => const ProfileEditorDialog());
+      case '/authentication/sign_up':
+        return buildRoute((_) => const SignUpScreen());
+      // case '/authentication/sign_in':
+      //   return buildRoute((_) => const SigInScreen());
 
       default:
         throw Exception('The route \'${routeSettings.name}\' does not exists');

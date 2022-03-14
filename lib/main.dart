@@ -6,6 +6,7 @@ import 'package:flatmates/app/ui/screens/authentication/authentication_screen.da
 import 'package:flatmates/app/ui/theme.dart';
 import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 
 void main() async {
@@ -17,6 +18,8 @@ void main() async {
   await Firebase.initializeApp();
 
   Locator.init();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 

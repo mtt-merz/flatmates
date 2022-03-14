@@ -1,22 +1,43 @@
 import 'package:bloc/bloc.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
 import 'package:flatmates/app/services/authentication/authentication_service.dart';
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-class AuthenticationCubit extends Cubit<AsyncSnapshot<bool>> {
+abstract class AuthenticationCubitState {}
+
+class Loading extends AuthenticationCubitState {}
+
+class NotAuthenticated extends AuthenticationCubitState {
+  final bool isLoading;
+  final bool hasError;
+
+  NotAuthenticated({this.isLoading = false, this.hasError = false});
+}
+
+class Authenticated extends AuthenticationCubitState {}
+
+class AuthenticationCubit extends Cubit<AuthenticationCubitState> {
   final _authentication = GetIt.I<AuthenticationService>();
+  final _userRepository = GetIt.I<UserRepository>();
 
-  AuthenticationCubit() : super(const AsyncSnapshot.waiting()) {
-    _authentication.onAuthenticationChanges.listen((userId) async {
-      if (userId == null) return emit(const AsyncSnapshot.withData(ConnectionState.active, false));
+  AuthenticationCubit() : super(Loading()) {
+    _authentication.stream.listen((authenticated) async {
+      if (!authenticated) return emit(NotAuthenticated());
 
-      GetIt.I<UserRepository>().init(userId);
-      emit(const AsyncSnapshot.withData(ConnectionState.active, true));
+      emit(NotAuthenticated(isLoading: true));
+      final userId = _authentication.currentUserId!;
+      await _userRepository.init(userId).onError((error, stackTrace) {
+        final user = User(userId, isAnonymous: true);
+        return _userRepository.insert(user);
+      });
+      emit(Authenticated());
     });
   }
 
-  void signInAnonymously() => _authentication.signInAnonymously();
+  void signInAnonymously() {
+    emit(NotAuthenticated(isLoading: true));
+    _authentication.signInAnonymously();
+  }
 
   void signIn() {}
 

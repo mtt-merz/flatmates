@@ -7,17 +7,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 class ProfileEditorCubit extends Cubit<Mate> {
-  ProfileEditorCubit() : super(_mate.clone());
-
-  static final Mate _mate = GetIt.I<FlatRepository>().value.mates.singleWhere(
-        (mate) => mate.userId == GetIt.I<UserRepository>().value.id,
-      );
+  ProfileEditorCubit()
+      : super(
+          GetIt.I<FlatRepository>()
+              .value
+              .mates
+              .singleWhere((mate) => mate.userId == GetIt.I<UserRepository>().value.id)
+              .clone(),
+        );
 
   List<Color> get availableColors => ColorUtils.availableColors;
 
-  void setName(String name) => _mate.name = name;
+  void setName(String name) => emit(state..name = name);
 
-  void setColor(Color color) => emit(_mate
+  void setColor(Color color) => emit(state
     ..colorValue = color.value
     ..clone());
 }

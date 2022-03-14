@@ -12,22 +12,40 @@ class FirebaseAuthWrapper extends AuthenticationService {
 
   FirebaseAuthWrapper() : _auth = FirebaseAuth.instance {
     _auth.authStateChanges().listen((user) {
-      _authStreamController.add(user?.uid);
+      _streamController.add(user != null);
       _logger.info(user != null ? 'User authenticated [${user.uid}]' : 'User NOT authenticated');
     });
   }
 
   @override
-  Future<void> dispose() => _authStreamController.close();
-
-  final BehaviorSubject<String?> _authStreamController = BehaviorSubject();
+  Future<void> dispose() => _streamController.close();
 
   @override
-  Stream<String?> get onAuthenticationChanges => _authStreamController.stream;
+  Stream<bool> get stream => _streamController.stream;
+  final BehaviorSubject<bool> _streamController = BehaviorSubject();
 
   @override
-  void signInAnonymously() => _auth.signInAnonymously().then(
-      (credentials) => _logger.info('User registered anonymously [${credentials.user!.uid}]'));
+  String? get currentUserId => _auth.currentUser?.uid;
+
+  @override
+  Future<String> signInAnonymously() => _auth.signInAnonymously().then((credentials) {
+        _logger.info('User registered anonymously [${credentials.user!.uid}]');
+        return credentials.user!.uid;
+      });
+
+  @override
+  Future<String> signInWithEmailAndPassword(String email, String password) =>
+      _auth.signInWithEmailAndPassword(email: email, password: password).then((credentials) {
+        _logger.info('User signed with username and password [${credentials.user!.uid}]');
+        return credentials.user!.uid;
+      });
+
+  @override
+  Future<String> signUpWithEmailAndPassword(String email, String password) =>
+      _auth.createUserWithEmailAndPassword(email: email, password: password).then((credentials) {
+        _logger.info('User registered with username and password [${credentials.user!.uid}]');
+        return credentials.user!.uid;
+      });
 
   @override
   Future<void>? signOut() => _auth.signOut().then((value) => _logger.info('User signed out'));
