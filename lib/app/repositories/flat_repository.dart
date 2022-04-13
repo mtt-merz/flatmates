@@ -48,6 +48,9 @@ class FlatRepository with Repository<Flat> {
       ..mates.add(oldMate!.copyWith(userId: newUserId)));
   }
 
+  Future<void> removeMate(String userId) =>
+      update((flat) => flat..mates.remove(loggedMate(userId)));
+
   Mate? loggedMate(String userId) =>
       valueOrNull?.mates.singleWhere((mate) => mate.userId == userId);
 }

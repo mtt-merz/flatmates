@@ -1,8 +1,6 @@
-import 'package:flatmates/app/ui/screens/authentication/authentication_cubit.dart';
+import 'package:flatmates/app/ui/settings/account/account_settings_panel.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
-import 'package:flatmates/app/ui/widget/card_column.dart';
 import 'package:flatmates/app/ui/widget/card_emphasis.dart';
-import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,21 +40,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       CircleAvatar(backgroundColor: cubit.mateColor, radius: 5),
                       const SizedBox(width: 10),
-                      Text(cubit.mateName, style: Theme.of(context).textTheme.titleSmall),
+                      Text('${cubit.mateName} ${cubit.mateSurname}',
+                          style: Theme.of(context).textTheme.titleSmall),
                     ],
                   ),
                 ),
                 actions: [
-                  cubit.userIsAnonymous
-                      ? IconButton(
-                          icon: const Icon(Icons.login),
-                          onPressed: () =>
-                              Navigator.of(context).pushNamed('/authentication/sign_up'),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.logout),
-                          onPressed: Locator.get<AuthenticationCubit>().signOut,
-                        ),
                   PopupMenuButton<int>(
                       onSelected: (int index) {
                         switch (index) {
@@ -70,11 +59,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: const Icon(Icons.edit),
                               index: 0,
                             ),
-                            buildPopupMenuItem(
-                              content: const Text('Set color'),
-                              icon: const Icon(Icons.color_lens),
-                              index: 1,
-                            ),
+                            // buildPopupMenuItem(
+                            //   content: const Text('Set color'),
+                            //   icon: const Icon(Icons.color_lens),
+                            //   index: 1,
+                            // ),
                           ]),
                 ],
               ),
@@ -90,24 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         image: Image.asset('assets/images/marketing_1.png'),
                         onTap: () => Navigator.of(context).pushNamed('/authentication/sign_up'),
                       ),
-                    // const Divider(),
-                    CardColumn(children: [
-                      SettingTile(
-                        title: const Text('Leave flat'),
-                        subtitle: const Text(
-                            'If there are no more mates in the flat, it will be automatically deleted'),
-                        icon: const Icon(Icons.home),
-                        onTap: cubit.leaveFlat,
-                      ),
-                      SettingTile(
-                          title: const Text('Delete profile'),
-                          icon: const Icon(Icons.delete),
-                          onTap: () => cubit.deleteAccount(
-                                onRequiresRecentLogin: () => Navigator.of(context)
-                                    .pushNamed('/authentication/check')
-                                    .then((value) => value as bool),
-                              )),
-                    ])
+
+                    // Settings
+                    AccountSettingsPanel(),
                   ]),
                 ),
               )
@@ -130,28 +104,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       height: 37,
       value: index,
       child: Row(children: children),
-    );
-  }
-}
-
-class SettingTile extends StatelessWidget {
-  final Widget title;
-  final Widget? subtitle;
-  final Icon? icon;
-  final void Function() onTap;
-
-  const SettingTile({Key? key, required this.title, this.subtitle, this.icon, required this.onTap})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: title,
-      subtitle: subtitle,
-      isThreeLine: subtitle != null,
-      leading: icon,
-      trailing: const Icon(Icons.arrow_forward_ios_outlined, size: 16),
-      onTap: onTap,
     );
   }
 }

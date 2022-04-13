@@ -46,7 +46,7 @@ class _ProfileEditorScreenState extends State<ProfileEditorScreen> {
           subtitle: 'This is your account related to the current flat',
           footer: SubmitButton(
             onPressed: () => cubit.save().then((_) => Navigator.of(context).pop()),
-            child: const Text('Save'),
+            child: const Text('SAVE'),
           ),
           children: mate == null
               ? [const CircularProgressIndicator()]
