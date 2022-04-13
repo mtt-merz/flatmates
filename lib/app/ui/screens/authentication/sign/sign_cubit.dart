@@ -1,65 +1,92 @@
-import 'dart:developer';
-
-import 'package:flatmates/app/models/user/user.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
 import 'package:flatmates/app/services/authentication/authentication_service.dart';
+import 'package:flatmates/locator.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 abstract class SignCubitState {}
 
-class Loading extends SignCubitState {}
-
 class Editing extends SignCubitState {
-  final bool canSubmit;
-  final bool hasError;
+  final String? error;
+  final bool isLoading;
 
-  Editing({required this.canSubmit, this.hasError = false});
+  Editing({this.isLoading = false, this.error});
 }
 
-class SignCubit extends Cubit<SignCubitState> {
-  SignCubit() : super(Editing(canSubmit: false));
+abstract class SignCubit extends Cubit<SignCubitState> {
+  SignCubit() : super(Editing());
 
-  String _email = '';
-  String _password = '';
-  String _repeatPassword = '';
+  final _userRepository = Locator.get<UserRepository>();
+  final _flatRepository = Locator.get<FlatRepository>();
 
-  set mail(String mail) {
-    _email = mail;
-    _activateConfirmButton();
+  final _auth = Locator.get<AuthenticationService>();
+
+  Future<void> _updateUser(User oldUser) async {
+    // Update user
+    await _userRepository.updateFunctional(
+      (user) => user
+        ..currentFlatId = oldUser.currentFlatId ?? user.currentFlatId
+        ..flatIds.addAll(oldUser.flatIds),
+    );
+
+    // Update mate in all flats
+    for (String flatId in _userRepository.value!.flatIds) {
+      await _flatRepository.fetch(flatId);
+      await _flatRepository.updateMateUserId(oldUser.id, _userRepository.value!.id);
+    }
   }
+}
 
-  set password(String password) {
-    _password = password;
-    _activateConfirmButton();
-  }
+class SignUpCubit extends SignCubit {
+  void registerWithEmailAndPassword({
+    required String email,
+    required String password,
+    required String repeatPassword,
+    required VoidCallback onSucceed,
+  }) async {
+    emit(Editing(isLoading: true));
 
-  set repeatPassword(String repeatPassword) {
-    _repeatPassword = repeatPassword;
-    _activateConfirmButton();
-  }
+    if (email.isEmpty || password.isEmpty || repeatPassword.isEmpty)
+      return emit(Editing(error: 'empty-fields'));
+    if (password != repeatPassword) return emit(Editing(error: 'passwords-not-matching'));
 
-  void _activateConfirmButton() {
-    bool canSubmit = _email.isNotEmpty && _password.isNotEmpty && _repeatPassword.isNotEmpty;
-    emit(Editing(canSubmit: canSubmit));
-  }
-
-  void submit(void Function() onSucceed) async {
-    emit(Loading());
     try {
-      if (_password.length < 6) throw Exception();
-      if (_password != _repeatPassword) throw Exception();
+      final userId = await _auth.registerWithEmailAndPassword(email, password,
+          updateAccount: _userRepository.hasValue);
 
-      final userId =
-          await GetIt.I<AuthenticationService>().signUpWithEmailAndPassword(_email, _password);
-      final user = User(userId, isAnonymous: false, flatId: GetIt.I<FlatRepository>().value.id);
-      await GetIt.I<UserRepository>().update(user);
+      final oldUser = _userRepository.valueOrNull;
+      await _userRepository.insert(User(userId, isAnonymous: false));
 
+      if (oldUser != null) await _updateUser(oldUser);
       onSucceed();
-    } on Object catch (e, s) {
-      log('Sign up error', error: e, stackTrace: s);
-      emit(Editing(canSubmit: true, hasError: true));
+    } on AuthenticationError catch (error) {
+      return emit(Editing(error: error.code));
+    }
+  }
+}
+
+class SignInCubit extends SignCubit {
+  void loginWithEmailAndPassword({
+    required String email,
+    required String password,
+    required VoidCallback onSucceed,
+  }) async {
+    emit(Editing(isLoading: true));
+
+    if (email.isEmpty || password.isEmpty) return emit(Editing(error: 'empty-fields'));
+
+    try {
+      final userId = await _auth.loginWithEmailAndPassword(email, password);
+
+      final oldUser = _userRepository.valueOrNull;
+      await _userRepository.fetch(userId);
+
+      if (oldUser != null) await _updateUser(oldUser);
+      onSucceed();
+    } on AuthenticationError catch (error) {
+      return emit(Editing(error: error.code));
     }
   }
 }

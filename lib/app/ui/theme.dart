@@ -10,15 +10,20 @@ class CustomThemeData {
 
   /// Text
   final _text = const TextTheme(
-    titleLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.black),
-    titleMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-    titleSmall: TextStyle(fontSize: 21, fontWeight: FontWeight.w700, color: Colors.black87),
-    bodyLarge: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w800),
-    bodyMedium: TextStyle(fontSize: 14.0),
-    labelLarge: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+    headline4: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.black),
+    headline5: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+    headline6: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
+    subtitle1: TextStyle(fontSize: 15),
+    bodyText1: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w800),
+    bodyText2: TextStyle(fontSize: 14.0),
+    button: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+    // labelLarge: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1),
     labelMedium: TextStyle(
-        fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1, color: Colors.black87),
-    labelSmall: TextStyle(fontSize: 15),
+      fontSize: 11,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1,
+      color: Colors.black87,
+    ),
   );
 
   /// AppBar
@@ -65,7 +70,7 @@ class CustomThemeData {
           side: BorderSide(color: _primary, width: 1.5),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_buttonRadius)),
           minimumSize: const Size(100, 0),
-          textStyle: _text.labelLarge,
+          textStyle: _text.button,
         ),
       );
 
@@ -120,9 +125,13 @@ class CustomThemeData {
         unselectedItemColor: Colors.black38,
       );
 
+  get _snackBar => const SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+      );
+
   ThemeData get theme => ThemeData(
         fontFamily: 'Mulish',
-        // androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
+        // useMaterial3: true,
         scaffoldBackgroundColor: _scaffoldBackground,
         textTheme: _text,
         appBarTheme: _appBar,
@@ -137,5 +146,6 @@ class CustomThemeData {
         inputDecorationTheme: _inputDecoration,
         chipTheme: _chip,
         bottomNavigationBarTheme: _bottomNavigationBar,
+        snackBarTheme: _snackBar,
       );
 }

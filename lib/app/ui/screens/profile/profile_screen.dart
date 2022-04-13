@@ -1,22 +1,34 @@
+import 'package:flatmates/app/ui/screens/authentication/authentication_cubit.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flatmates/app/ui/widget/card_column.dart';
 import 'package:flatmates/app/ui/widget/card_emphasis.dart';
+import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 import 'profile_cubit.dart';
 
-class ProfilePage extends StatelessWidget {
-  ProfilePage({Key? key}) : super(key: key);
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({Key? key}) : super(key: key);
 
-  final cubit = GetIt.I<ProfileCubit>();
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final cubit = ProfileCubit();
+
+  @override
+  void dispose() {
+    super.dispose();
+    cubit.close();
+  }
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
-      builder: (context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+      builder: (context, state) {
+        if (state is! Ready) return const Center(child: CircularProgressIndicator());
 
         return Scaffold(
           body: CustomScrollView(
@@ -24,7 +36,6 @@ class ProfilePage extends StatelessWidget {
               SliverAppBar(
                 pinned: true,
                 expandedHeight: 120,
-                foregroundColor: Colors.amber,
                 flexibleSpace: FlexibleSpaceBar(
                   titlePadding: const EdgeInsetsDirectional.only(start: 24, bottom: 16.0),
                   title: Row(
@@ -36,10 +47,16 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 actions: [
-                  IconButton(
-                    icon: const Icon(Icons.login),
-                    onPressed: () => Navigator.of(context).pushNamed('/authentication/sign_up'),
-                  ),
+                  cubit.userIsAnonymous
+                      ? IconButton(
+                          icon: const Icon(Icons.login),
+                          onPressed: () =>
+                              Navigator.of(context).pushNamed('/authentication/sign_up'),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.logout),
+                          onPressed: Locator.get<AuthenticationCubit>().signOut,
+                        ),
                   PopupMenuButton<int>(
                       onSelected: (int index) {
                         switch (index) {
@@ -62,15 +79,17 @@ class ProfilePage extends StatelessWidget {
                 ],
               ),
               SliverPadding(
-                padding: SizeUtils.of(context).basePadding,
+                padding: SizeUtils.of(context).listScreenPadding,
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
-                    CardEmphasis(
-                      title: 'Register an account!',
-                      subtitle:
-                          'Right now, if you logout or uninstall the app, you will lose all your data',
-                      onTap: () {},
-                    ),
+                    if (cubit.userIsAnonymous)
+                      CardEmphasis(
+                        title: 'Register an account!',
+                        subtitle: 'Right now, if you logout or uninstall the app'
+                            ' you will lose all your data',
+                        image: Image.asset('assets/images/marketing_1.png'),
+                        onTap: () => Navigator.of(context).pushNamed('/authentication/sign_up'),
+                      ),
                     // const Divider(),
                     CardColumn(children: [
                       SettingTile(
@@ -83,7 +102,11 @@ class ProfilePage extends StatelessWidget {
                       SettingTile(
                           title: const Text('Delete profile'),
                           icon: const Icon(Icons.delete),
-                          onTap: cubit.deleteAccount),
+                          onTap: () => cubit.deleteAccount(
+                                onRequiresRecentLogin: () => Navigator.of(context)
+                                    .pushNamed('/authentication/check')
+                                    .then((value) => value as bool),
+                              )),
                     ])
                   ]),
                 ),
@@ -105,8 +128,8 @@ class ProfilePage extends StatelessWidget {
     return PopupMenuItem<int>(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       height: 37,
-      child: Row(children: children),
       value: index,
+      child: Row(children: children),
     );
   }
 }

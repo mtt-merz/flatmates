@@ -1,7 +1,9 @@
 import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
 import 'package:flatmates/app/ui/screens/expenses/expenses_screen/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/home/home_page.dart';
-import 'package:flatmates/app/ui/screens/profile/profile_page.dart';
+import 'package:flatmates/app/ui/screens/profile/profile_screen.dart';
+import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -37,13 +39,15 @@ class _MainScreenState extends State<MainScreen> {
           controller: pageController,
           physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (page) => setState(() => this.page = page),
-          children: [HomePage(), const ExpensesPage(), const ChoresPage(), ProfilePage()],
+          children: [HomePage(), const ExpensesPage(), const ChoresPage(), ProfileScreen()],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: page,
           onTap: (page) => setState(() {
-            this.page = page;
-            pageController.jumpToPage(page);
+            try {
+              this.page = page;
+              pageController.jumpToPage(page);
+            } on Object catch (_) {}
           }),
           items: [
             buildBottomNavigatorBarItem('Home', icon: Icons.home_outlined, activeIcon: Icons.home),
@@ -62,17 +66,26 @@ class _MainScreenState extends State<MainScreen> {
       BottomNavigationBarItem(
         label: label,
         icon: Icon(icon),
-        activeIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(activeIcon ?? icon),
-            const SizedBox(width: 5),
-            Text(label,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor))
-          ],
+        activeIcon: SizedBox(
+          height: SizeUtils.of(context).getScaledHeight(4),
+          width: double.infinity,
+          child: Center(
+            child: ListView(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              children: [
+                Icon(activeIcon ?? icon),
+                const SizedBox(width: 5),
+                Center(
+                  child: Text(label,
+                      style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+                          )),
+                )
+              ],
+            ),
+          ),
         ),
       );
 }

@@ -22,4 +22,11 @@ mixin Repository<T> {
   void close() => _streamController.close();
 }
 
-class LoadRepositoryFailure {}
+class FetchRepositoryFailure<R extends Repository> {
+  final String toFetch;
+
+  FetchRepositoryFailure(this.toFetch);
+
+  @override
+  String toString() => '$R cannot fetch $toFetch';
+}

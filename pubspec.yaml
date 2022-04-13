@@ -16,11 +16,12 @@ dependencies:
 
   get_it: ^7.2.0
   rxdart: ^0.27.3
+  equatable: ^2.0.3
   flutter_bloc: ^8.0.1
 
-  firebase_core: ^1.13.1
-  firebase_auth: ^3.3.9
-  cloud_firestore: ^3.1.10
+  firebase_core: ^1.14.1
+  firebase_auth: ^3.3.14
+  cloud_firestore: ^3.1.12
 
   flutter_secure_storage: ^5.0.2
 
@@ -32,10 +33,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^1.0.4
+  flutter_lints: ^2.0.0
 
-  build_runner: ^2.0.0
-  json_serializable: ^6.0.5
+  build_runner: ^2.1.8
+  json_serializable: ^6.1.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -48,16 +49,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-    # To add assets to your application, add an assets section, like this:
-    # assets:
-    #   - images/a_dot_burr.jpeg
-    #   - images/a_dot_ham.jpeg
-
-    # An image asset can refer to one or more resolution-specific "variants", see
-    # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
+  assets:
+    - assets/images/marketing_1.png
 
   fonts:
     - family: Mulish
@@ -80,6 +73,3 @@ flutter:
         - asset: assets/fonts/Mulish-LightItalic.ttf
           style: italic
           weight: 300
-
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages

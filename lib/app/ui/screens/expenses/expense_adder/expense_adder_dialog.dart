@@ -4,7 +4,6 @@ import 'package:flatmates/app/ui/widget/form_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 import 'expense_adder_cubit.dart';
 
@@ -16,7 +15,13 @@ class ExpenseAdderDialog extends StatefulWidget {
 }
 
 class _ExpenseAdderDialogState extends State<ExpenseAdderDialog> {
-  final cubit = GetIt.I<ExpenseAdderCubit>();
+  final cubit = ExpenseAdderCubit();
+
+  @override
+  void dispose() {
+    super.dispose();
+    cubit.close();
+  }
 
   @override
   Widget build(BuildContext context) => BlocBuilder(

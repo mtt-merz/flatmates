@@ -2,9 +2,13 @@ part of 'init_screen.dart';
 
 class _SetNamePage extends StatefulWidget {
   final void Function(String) setName;
-  final bool hasError;
 
-  const _SetNamePage({Key? key, required this.setName, required this.hasError}) : super(key: key);
+  final bool hasError;
+  final bool isLoading;
+
+  const _SetNamePage(
+      {Key? key, required this.setName, required this.hasError, required this.isLoading})
+      : super(key: key);
 
   @override
   State<_SetNamePage> createState() => _SetNamePageState();
@@ -27,7 +31,6 @@ class _SetNamePageState extends State<_SetNamePage> {
         children: [
           FieldContainer(
               label: 'NAME*',
-              // padding: EdgeInsets.symmetric(vertical: SizeUtils.of(context).getScaledHeight(3)),
               child: TextField(
                 controller: controller,
                 autofocus: true,
@@ -35,15 +38,19 @@ class _SetNamePageState extends State<_SetNamePage> {
                 onChanged: (_) => setState(() {}),
                 onSubmitted: submit,
               )),
-
-          // [Error text]
-          if (widget.hasError) const Text('Name not accepted, please check it or find a new one'),
-
-          ElevatedButton(
-            child: const Text('CONFIRM'),
-            onPressed: controller.value.text.isNotEmpty ? submit : null,
-          )
         ],
+        footer: SubmitButton(
+          child: const Text('CONFIRM'),
+          onPressed: controller.value.text.isNotEmpty ? submit : null,
+          loading: widget.isLoading,
+          error: widget.hasError ? 'Name not accepted, please check it or find a new one' : null,
+        ),
+        // floatingActionButton: LoadingFloatingActionButton(
+        //   isLoading: widget.isLoading,
+        //   label: 'CONFIRM',
+        //   iconData: Icons.done,
+        //   onPressed: submit,
+        // ),
       );
 
   void submit([String? value]) {

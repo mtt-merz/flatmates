@@ -11,30 +11,28 @@ class FieldContainer extends StatelessWidget {
     required this.child,
     this.label,
     this.description,
-    this.padding = const EdgeInsets.only(bottom: 24),
+    this.padding = const EdgeInsets.only(bottom: 16),
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final labelWidget = label == null
-        ? const SizedBox()
-        : Padding(
-            padding: const EdgeInsets.only(left: 2, bottom: 6),
-            child: Text(label!.toUpperCase(), style: Theme.of(context).textTheme.labelMedium),
-          );
-
-    final descriptionWidget = description == null
-        ? const SizedBox()
-        : Padding(
-            padding: const EdgeInsets.only(left: 2, top: 6),
-            child: Text(description!, style: Theme.of(context).textTheme.bodySmall),
-          );
-
-    return Padding(
-        padding: padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [labelWidget, child, descriptionWidget],
-        ));
-  }
+  Widget build(BuildContext context) => Padding(
+      padding: padding,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          label == null
+              ? const SizedBox()
+              : Padding(
+                  padding: const EdgeInsets.only(left: 2, bottom: 5),
+                  child: Text(label!.toUpperCase(), style: Theme.of(context).textTheme.labelMedium),
+                ),
+          child,
+          description == null
+              ? const SizedBox()
+              : Padding(
+                  padding: const EdgeInsets.only(left: 2, top: 6),
+                  child: Text(description!, style: Theme.of(context).textTheme.bodySmall),
+                ),
+        ],
+      ));
 }

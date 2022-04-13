@@ -9,6 +9,8 @@ part 'flat.g.dart';
 
 @JsonSerializable()
 class Flat extends SerializableModel {
+  static const key = 'flats';
+
   @JsonKey(required: true)
   String? name;
 

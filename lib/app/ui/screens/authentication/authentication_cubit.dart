@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
 import 'package:flatmates/app/services/authentication/authentication_service.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flatmates/locator.dart';
 
 abstract class AuthenticationCubitState {}
 
@@ -9,37 +9,44 @@ class Loading extends AuthenticationCubitState {}
 
 class NotAuthenticated extends AuthenticationCubitState {
   final bool isLoading;
-  final bool hasError;
+  final AuthenticationError? error;
 
-  NotAuthenticated({this.isLoading = false, this.hasError = false});
+  NotAuthenticated({this.isLoading = false, this.error});
 }
 
 class Authenticated extends AuthenticationCubitState {}
 
 class AuthenticationCubit extends Cubit<AuthenticationCubitState> {
-  final _authentication = GetIt.I<AuthenticationService>();
-  final _userRepository = GetIt.I<UserRepository>();
+  final _authentication = Locator.get<AuthenticationService>();
+  final _userRepository = Locator.get<UserRepository>();
 
   AuthenticationCubit() : super(Loading()) {
-    _authentication.stream.listen((authenticated) async {
-      if (!authenticated) return emit(NotAuthenticated());
+    // _authentication.deleteAccount().then((value) {
+    _userRepository.stream
+        .listen((user) => emit(user != null ? Authenticated() : NotAuthenticated()));
 
-      emit(NotAuthenticated(isLoading: true));
-      final userId = _authentication.currentUserId!;
-      await _userRepository.init(userId).onError((error, stackTrace) {
-        final user = User(userId, isAnonymous: true);
-        return _userRepository.insert(user);
-      });
-      emit(Authenticated());
-    });
+    final userId = _authentication.currentUser;
+    if (userId != null)
+      _userRepository.fetch(userId);
+    else
+      emit(NotAuthenticated());
+    // });
   }
 
-  void signInAnonymously() {
+  void signInAnonymously() async {
     emit(NotAuthenticated(isLoading: true));
-    _authentication.signInAnonymously();
+
+    final userId = await _authentication.signAnonymously();
+    await _userRepository.fetch(userId).onError((error, stackTrace) {
+      final user = User(userId, isAnonymous: true);
+      return _userRepository.insert(user);
+    });
+
+    emit(Authenticated());
   }
 
-  void signIn() {}
-
-  void signOut() => _authentication.signOut();
+  void signOut() async {
+    await _authentication.signOut();
+    emit(NotAuthenticated());
+  }
 }

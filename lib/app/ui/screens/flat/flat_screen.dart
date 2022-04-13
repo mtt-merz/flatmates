@@ -4,7 +4,6 @@ import 'package:flatmates/app/ui/screens/flat/flat_common_spaces_setter_dialog.d
 import 'package:flatmates/app/ui/screens/flat/flat_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 class FlatScreen extends StatefulWidget {
   const FlatScreen({Key? key}) : super(key: key);
@@ -14,8 +13,14 @@ class FlatScreen extends StatefulWidget {
 }
 
 class _FlatScreenState extends State<FlatScreen> {
-  final FlatCubit cubit = GetIt.I<FlatCubit>();
+  final FlatCubit cubit = FlatCubit();
   final TextEditingController titleController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    cubit.close();
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(

@@ -1,11 +1,11 @@
 import 'package:flatmates/app/models/expense/expense.dart';
 import 'package:flatmates/app/repositories/expense_repository.dart';
+import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 class ExpenseCubit extends Cubit<AsyncSnapshot<List<Expense>>> {
-  final _expenseRepository = GetIt.I<ExpenseRepository>();
+  final _expenseRepository = Locator.get<ExpenseRepository>();
 
   ExpenseCubit() : super(const AsyncSnapshot.waiting()) {
     _expenseRepository.stream.listen(

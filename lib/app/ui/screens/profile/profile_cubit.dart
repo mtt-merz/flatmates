@@ -2,39 +2,54 @@ import 'package:flatmates/app/models/flat/mate/mate.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
 import 'package:flatmates/app/services/authentication/authentication_service.dart';
+import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
-class ProfileCubit extends Cubit<AsyncSnapshot> {
-  final _flatRepository = GetIt.I<FlatRepository>();
-  final _userRepository = GetIt.I<UserRepository>();
+abstract class ProfileCubitState {}
 
-  ProfileCubit() : super(const AsyncSnapshot.withData(ConnectionState.active, true));
+class Ready extends ProfileCubitState {}
 
-  final _user = GetIt.I<UserRepository>().value;
-  final _flat = GetIt.I<FlatRepository>().value;
+class ProfileCubit extends Cubit<ProfileCubitState> {
+  ProfileCubit()
+      : _flat = FlatRepository.i.value,
+        super(Ready()) {
+    FlatRepository.i.stream.listen((flat) {
+      _flat = flat;
+      emit(Ready());
+    });
+  }
 
-  Mate get _mate => _flat.mates.singleWhere((element) => element.userId == _user.id);
+  Mate get _mate => FlatRepository.i.loggedMate(_user.id)!;
+  final _user = UserRepository.i.value!;
+  late Flat _flat;
 
   Color get mateColor => Color(_mate.colorValue);
 
   String get mateName => _mate.name;
 
+  bool get userIsAnonymous => _user.isAnonymous;
+
   void leaveFlat() {
-    _userRepository.update(_user..flatId = null);
+    UserRepository.i.update(_user..flatIds.remove(_user.currentFlatId));
     _removeMate();
   }
 
-  void deleteAccount() {
-    GetIt.I<AuthenticationService>().deleteAccount();
+  void deleteAccount({required Future<bool> Function() onRequiresRecentLogin}) async {
+    try {
+      await Locator.get<AuthenticationService>().deleteAccount();
 
-    _userRepository.remove();
-    _removeMate();
+      UserRepository.i.remove();
+      _removeMate();
+    } on AuthenticationError catch (error) {
+      if (error.code == 'requires-recent-login')
+        onRequiresRecentLogin().then(
+            (value) => value ? deleteAccount(onRequiresRecentLogin: onRequiresRecentLogin) : null);
+    }
   }
 
   void _removeMate() {
     _flat.mates.removeWhere((mate) => mate == _mate);
-    _flat.mates.isEmpty ? _flatRepository.remove() : _flatRepository.update((flat) => flat);
+    _flat.mates.isEmpty ? FlatRepository.i.remove() : FlatRepository.i.update((flat) => flat);
   }
 }

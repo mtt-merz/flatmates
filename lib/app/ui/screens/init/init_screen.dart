@@ -2,9 +2,9 @@ import 'package:flatmates/app/ui/screens/main_screen.dart';
 import 'package:flatmates/app/ui/screens/splash_screen.dart';
 import 'package:flatmates/app/ui/widget/field_container.dart';
 import 'package:flatmates/app/ui/widget/screen_template.dart';
+import 'package:flatmates/app/ui/widget/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 import 'init_cubit.dart';
 
@@ -20,7 +20,13 @@ class InitScreen extends StatefulWidget {
 }
 
 class _InitScreenState extends State<InitScreen> {
-  final cubit = GetIt.I<InitCubit>();
+  final cubit = InitCubit();
+
+  @override
+  void dispose() {
+    super.dispose();
+    cubit.close();
+  }
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
@@ -39,6 +45,7 @@ class _InitScreenState extends State<InitScreen> {
           return _SetNamePage(
             setName: cubit.setName,
             hasError: state.hasError,
+            isLoading: state.isLoading,
           );
 
         assert(state is Initialized);

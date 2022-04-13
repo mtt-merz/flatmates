@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flatmates/app/models/serializable_model.dart';
 import 'package:flatmates/app/repositories/repository.dart';
 import 'package:flatmates/app/services/persistence/persistence_service.dart';
+import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart' show Logger;
 
 abstract class RepositoryCollection<T extends SerializableModel> with Repository<List<T>> {
   Logger get _logger => Logger(runtimeType.toString());
-  static final _persistence = GetIt.I<PersistenceService>();
+  static final _persistence = Locator.get<PersistenceService>();
 
   /// Build a [T] instance starting from a json value
   final T Function(Map<String, dynamic>) builder;

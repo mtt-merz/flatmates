@@ -2,15 +2,26 @@ import 'package:flatmates/app/ui/screens/authentication/authentication_cubit.dar
 import 'package:flatmates/app/ui/screens/init/init_screen.dart';
 import 'package:flatmates/app/ui/screens/splash_screen.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
-import 'package:flatmates/app/ui/widget/loading_button.dart';
+import 'package:flatmates/app/ui/widget/submit_button.dart';
+import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
-class AuthenticationScreen extends StatelessWidget {
-  AuthenticationScreen({Key? key}) : super(key: key);
+class AuthenticationScreen extends StatefulWidget {
+  const AuthenticationScreen({Key? key}) : super(key: key);
 
-  final cubit = GetIt.I<AuthenticationCubit>();
+  @override
+  State<AuthenticationScreen> createState() => _AuthenticationScreenState();
+}
+
+class _AuthenticationScreenState extends State<AuthenticationScreen> {
+  final cubit = Locator.get<AuthenticationCubit>();
+
+  @override
+  void dispose() {
+    super.dispose();
+    cubit.close();
+  }
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
@@ -19,36 +30,37 @@ class AuthenticationScreen extends StatelessWidget {
         if (state is Loading) return const SplashScreen();
         if (state is Authenticated) return const InitScreen();
 
-        assert(state is NotAuthenticated);
+        if (state is! NotAuthenticated) throw Exception();
         return Scaffold(
           backgroundColor: Theme.of(context).colorScheme.surface,
           body: Padding(
-            padding: SizeUtils.of(context).screenPadding,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Image
-                const Expanded(child: Icon(Icons.star)),
+              padding: SizeUtils.of(context).screenPadding,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Image
+                  const Expanded(child: Icon(Icons.star)),
 
-                // Sign in Anonymously button
-                LoadingElevatedButton(
-                  loading: (state as NotAuthenticated).isLoading,
-                  child: const SizedBox(
-                      width: double.infinity, child: Text('START', textAlign: TextAlign.center)),
-                  onPressed: cubit.signInAnonymously,
-                ),
-
-                // Sign in button
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Text('Already have an account?'),
-                  TextButton(
-                    child: const Text('Login'),
-                    onPressed: cubit.signIn,
+                  // Sign in Anonymously button
+                  SubmitButton(
+                    onPressed: cubit.signInAnonymously,
+                    loading: state.isLoading,
+                    child: const Text('START'),
                   ),
-                ])
-              ],
-            ),
-          ),
+
+                  // Sign in button
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    const Text('You already have an account?'),
+                    TextButton(
+                      child: const Text('Login'),
+                      onPressed: () => Navigator.of(context)
+                          .pushNamed('/authentication/sign_in')
+                          .then((value) => ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(content: Text('You\'re logged in')))),
+                    ),
+                  ])
+                ],
+              )),
         );
       });
 }

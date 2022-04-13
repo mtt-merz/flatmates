@@ -4,12 +4,22 @@ import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
-class HomePage extends StatelessWidget {
-  final cubit = GetIt.I<HomeCubit>();
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
-  HomePage({Key? key}) : super(key: key);
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final cubit = HomeCubit();
+
+  @override
+  void dispose() {
+    super.dispose();
+    cubit.close();
+  }
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
@@ -34,10 +44,11 @@ class HomePage extends StatelessWidget {
                     trailing: IconButton(
                       icon: const Icon(Icons.add),
                       onPressed: () => showDialog(
-                        barrierDismissible: false,
+                          barrierDismissible: false,
                           useSafeArea: true,
                           barrierColor: Colors.black87,
-                          context: context, builder: (context) => const ExpenseAdderDialog()),
+                          context: context,
+                          builder: (context) => const ExpenseAdderDialog()),
                     ),
                     onTap: () => Navigator.of(context).pushNamed('/expenses'),
                   ),

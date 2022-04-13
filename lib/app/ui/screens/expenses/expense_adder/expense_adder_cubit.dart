@@ -2,15 +2,15 @@ import 'package:flatmates/app/models/expense/expense.dart';
 import 'package:flatmates/app/models/flat/mate/mate.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
+import 'package:flatmates/locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 class ExpenseAdderCubit extends Cubit<Expense?> {
   ExpenseAdderCubit() : super(_defaultExpense);
 
-  static User get _user => GetIt.I<UserRepository>().value;
+  static User get _user => Locator.get<UserRepository>().value!;
 
-  static Flat get _flat => GetIt.I<FlatRepository>().value;
+  static Flat get _flat => Locator.get<FlatRepository>().value;
 
   static final Expense _defaultExpense = Expense(
     amount: 0,
@@ -38,5 +38,5 @@ class ExpenseAdderCubit extends Cubit<Expense?> {
 
   List<Mate> get mates => [..._flat.mates];
 
-  bool get canSubmit => true;//_expense.amount > 0 && _expense.addresseeIds.isNotEmpty;
+  bool get canSubmit => true; //_expense.amount > 0 && _expense.addresseeIds.isNotEmpty;
 }

@@ -9,18 +9,20 @@ part of 'mate.dart';
 Mate _$MateFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    allowedKeys: const ['userId', 'name', 'colorValue'],
-    requiredKeys: const ['userId', 'name', 'colorValue'],
+    allowedKeys: const ['name', 'surname', 'userId', 'colorValue'],
+    requiredKeys: const ['name', 'userId', 'colorValue'],
   );
   return Mate._(
     json['userId'] as String,
     json['name'] as String,
+    json['surname'] as String?,
     json['colorValue'] as int,
   );
 }
 
 Map<String, dynamic> _$MateToJson(Mate instance) => <String, dynamic>{
-      'userId': instance.userId,
       'name': instance.name,
+      'surname': instance.surname,
+      'userId': instance.userId,
       'colorValue': instance.colorValue,
     };
