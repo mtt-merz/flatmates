@@ -2,7 +2,6 @@ import 'package:flatmates/app/ui/screens/expenses/expense_adder/expense_adder_di
 import 'package:flatmates/app/ui/screens/home/home_cubit.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,18 +23,25 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
-      builder: (context, AsyncSnapshot snapshot) {
+      builder: (context, state) {
+        if (state is! Ready) return const Center(child: CircularProgressIndicator());
+
         return Scaffold(
+          appBar: AppBar(
+            title: InkWell(
+              onTap: () => Navigator.of(context).pushNamed('/flat'),
+              child: Row(
+                children: [
+                  Text(cubit.flatName ?? 'My Flat'),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward_ios, size: 15),
+                ],
+              ),
+            ),
+          ),
           body: Padding(
             padding: SizeUtils.of(context).basePadding,
             child: CustomScrollView(slivers: [
-              SliverAppBar(
-                title: Text(cubit.flatName),
-                pinned: true,
-                backgroundColor: Colors.transparent,
-                expandedHeight: 150,
-                systemOverlayStyle: SystemUiOverlayStyle.light,
-              ),
               SliverList(
                   delegate: SliverChildListDelegate([
                 Card(

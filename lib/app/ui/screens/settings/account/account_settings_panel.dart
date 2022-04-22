@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/settings/settings_cubit.dart';
+import 'package:flatmates/app/ui/screens/settings/settings_cubit.dart';
 import 'package:flatmates/app/ui/widget/card_column.dart';
 import 'package:flutter/material.dart';
 

@@ -29,7 +29,7 @@ class CustomThemeData {
   /// AppBar
   get _appBar => AppBarTheme(
         elevation: 0,
-        titleSpacing: 0,
+        // titleSpacing: 0,
         backgroundColor: Colors.white,
         titleTextStyle: _text.headline6!.copyWith(fontFamily: 'Mulish'),
         iconTheme: const IconThemeData(color: Colors.black87),

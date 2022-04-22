@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ScreenTemplate extends StatefulWidget {
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final List<Widget> children;
   final Widget? footer;
   final FloatingActionButton? floatingActionButton;
@@ -13,7 +13,7 @@ class ScreenTemplate extends StatefulWidget {
   const ScreenTemplate({
     Key? key,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.children,
     this.onPop,
     this.floatingActionButton,
@@ -72,7 +72,7 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
                       // Text(widget.title,
                       //     textAlign: TextAlign.start, style: Theme.of(context).textTheme.headline4),
                       // SizedBox(height: SizeUtils.of(context).getScaledHeight(1)),
-                      Text(widget.subtitle),
+                      widget.subtitle != null ? Text(widget.subtitle!) : const SizedBox(),
                       SizedBox(height: SizeUtils.of(context).getScaledHeight(4)),
                       ...widget.children,
                     ])),

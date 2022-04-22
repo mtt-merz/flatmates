@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/settings/account/account_settings_panel.dart';
+import 'package:flatmates/app/ui/screens/settings/account/account_settings_panel.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flatmates/app/ui/widget/card_emphasis.dart';
 import 'package:flutter/material.dart';
