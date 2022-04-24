@@ -1,4 +1,5 @@
 import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/widget/submit_button.dart';
 import 'package:flutter/material.dart';
 
 class FormDialog extends StatelessWidget {
@@ -18,36 +19,60 @@ class FormDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SafeArea(
-    child: Dialog(
-          insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Dialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
-            // mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 18, right: 20, top: 18),
-                child: Row(children: [Text(title, style: Theme.of(context).textTheme.headline5)]),
+                padding: SizeUtils.of(context).horizontalPadding.add(
+                    EdgeInsets.only(
+                        top: SizeUtils.of(context).horizontalPaddingValue,
+                        bottom:
+                            SizeUtils.of(context).horizontalPaddingValue / 2)),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(title, style: Theme.of(context).textTheme.headline5),
+                    InkWell(child: const Icon(Icons.close), onTap: onCancel)
+                  ],
+                ),
               ),
               // const Divider(),
-              ListView(
-                padding: SizeUtils.of(context).basePadding,
-                shrinkWrap: true,
-                children: children,
+              Expanded(
+                child: ListView(
+                  padding: SizeUtils.of(context).basePadding,
+                  // shrinkWrap: true,
+                  children: children,
+                ),
               ),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.end,
-              //     children: [
-              //       onCancel != null
-              //           ? TextButton(onPressed: onCancel!, child: const Text('Cancel'))
-              //           : const SizedBox(),
-              //       const SizedBox(width: 10),
-              //       ElevatedButton(onPressed: onSubmit, child: const Text('SAVE'))
-              //     ],
-              //   ),
-              // )
+              Padding(
+                  padding: SizeUtils.of(context).horizontalPadding.add(
+                      EdgeInsets.symmetric(
+                          vertical:
+                              SizeUtils.of(context).verticalPaddingValue / 2)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Flexible(
+                          flex: 3,
+                          child: TextButton(
+                            onPressed: onCancel,
+                            child: const Text('CANCEL'),
+                          )),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        flex: 2,
+                        child: SubmitButton(
+                          child: const Text('SAVE'),
+                          onPressed: onSubmit,
+                        ),
+                      ),
+                    ],
+                  ))
             ],
           ),
         ),
-  );
+      );
 }

@@ -15,6 +15,9 @@ class Flat extends SerializableModel {
   String? name;
 
   @JsonKey(required: true)
+  String invitationCode;
+
+  @JsonKey(required: true)
   List<Mate> mates;
 
   @JsonKey(required: true, defaultValue: [])
@@ -23,9 +26,12 @@ class Flat extends SerializableModel {
   Flat({required Mate mate})
       : mates = [mate],
         commonSpaces = [],
+        invitationCode = DateTime.now().millisecondsSinceEpoch.toString(),
         super.init();
 
-  Flat._(String id, this.name, this.mates, this.commonSpaces) : super(id);
+  Flat._(
+      String id, this.invitationCode, this.name, this.mates, this.commonSpaces)
+      : super(id);
 
   @override
   factory Flat.fromJson(json) => _$FlatFromJson(json);

@@ -41,4 +41,11 @@ class Expense extends SerializableModel {
 
   @override
   Map<String, dynamic> toJson() => _$ExpenseToJson(this);
+
+  Expense clone() =>
+      Expense._(id, amount, description, issuerId, addresseeIds, timestamp);
+
+  @override
+  List<Object> get props =>
+      [id, amount, description ?? '', addresseeIds, issuerId, timestamp];
 }

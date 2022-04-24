@@ -10,12 +10,19 @@ class SizeUtils {
   double getScaledHeight(double percentage) =>
       MediaQuery.of(_context).size.height * percentage / 100;
 
-  double getScaledWidth(double percentage) => MediaQuery.of(_context).size.width * percentage / 100;
+  double getScaledWidth(double percentage) =>
+      MediaQuery.of(_context).size.width * percentage / 100;
 
-  EdgeInsetsGeometry get listScreenPadding => EdgeInsets.symmetric(horizontal: getScaledWidth(5));
+  double get horizontalPaddingValue => getScaledWidth(5);
 
-  EdgeInsetsGeometry get basePadding =>
-      listScreenPadding.add(EdgeInsets.symmetric(vertical: getScaledHeight(2.5)));
+  double get verticalPaddingValue => getScaledHeight(2);
 
-  EdgeInsetsGeometry get screenPadding => basePadding.add(EdgeInsets.only(top: getScaledHeight(5)));
+  EdgeInsets get horizontalPadding =>
+      EdgeInsets.symmetric(horizontal: horizontalPaddingValue);
+
+  EdgeInsetsGeometry get basePadding => EdgeInsets.symmetric(
+      horizontal: horizontalPaddingValue, vertical: verticalPaddingValue);
+
+  EdgeInsetsGeometry get screenPadding =>
+      basePadding.add(EdgeInsets.only(top: getScaledHeight(5)));
 }

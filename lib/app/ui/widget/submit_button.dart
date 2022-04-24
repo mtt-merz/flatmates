@@ -8,20 +8,25 @@ class SubmitButton extends StatelessWidget {
   final bool loading;
   final String? error;
 
-  const SubmitButton(
-      {Key? key, required this.child, required this.onPressed, this.loading = false, this.error})
-      : assert(loading && error == null || !loading),
-        super(key: key);
+  const SubmitButton({
+    Key? key,
+    required this.child,
+    required this.onPressed,
+    this.loading = false,
+    this.error,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Column(
         children: [
           if (error != null)
-            Padding(padding: const EdgeInsets.only(bottom: 10), child: ErrorText(error!)),
+            Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: ErrorText(error!)),
 
           // Button
           ElevatedButton(
-            style: ElevatedButton.styleFrom(surfaceTintColor: Colors.black),
+            style: ElevatedButton.styleFrom(onSurface: Colors.black),
             onPressed: loading ? null : onPressed,
             child: SizedBox(
                 width: double.infinity,
@@ -29,8 +34,10 @@ class SubmitButton extends StatelessWidget {
                   alignment: Alignment.center,
                   child: loading
                       ? SizedBox.square(
-                          dimension: Theme.of(context).textTheme.button!.fontSize,
-                          child: const CircularProgressIndicator(strokeWidth: 1.5))
+                          dimension:
+                              Theme.of(context).textTheme.button!.fontSize,
+                          child:
+                              const CircularProgressIndicator(strokeWidth: 1.5))
                       : child,
                 )),
           ),

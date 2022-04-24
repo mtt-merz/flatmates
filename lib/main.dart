@@ -8,14 +8,20 @@ import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:uuid/uuid.dart';
 
 void main() async {
   // Logger.root.level = Level.ALL;
-  Logger.root.onRecord.listen((event) =>
-      log(event.message, name: event.loggerName, error: event.error, stackTrace: event.stackTrace));
+  Logger.root.onRecord.listen((event) => log(event.message,
+      name: event.loggerName,
+      error: event.error,
+      stackTrace: event.stackTrace));
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
+  String id = Uuid(options: {}).v1();
+  print(id);
 
   Locator.init();
   SystemChrome.setPreferredOrientations(
@@ -30,6 +36,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         theme: CustomThemeData().theme,
         onGenerateRoute: CustomRouter.onGenerateRoute,
-        home: AuthenticationScreen(),
+        home: const AuthenticationScreen(),
       );
 }

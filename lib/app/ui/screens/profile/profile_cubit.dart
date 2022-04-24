@@ -25,7 +25,13 @@ class ProfileCubit extends Cubit<ProfileCubitState> {
   Color get mateColor => Color(_mate.colorValue);
 
   String get mateName => _mate.name;
+
   String? get mateSurname => _mate.surname;
 
   bool get userIsAnonymous => _user.isAnonymous;
+
+  void updateMate(Mate? mate) {
+    if (mate == null) return;
+    FlatRepository.i.updateMate(mate);
+  }
 }

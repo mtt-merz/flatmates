@@ -10,13 +10,16 @@ class CustomThemeData {
 
   /// Text
   final _text = const TextTheme(
-    headline4: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.black),
+    headline4: TextStyle(
+        fontSize: 32, fontWeight: FontWeight.w700, color: Colors.black),
     headline5: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-    headline6: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
+    headline6: TextStyle(
+        fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black87),
     subtitle1: TextStyle(fontSize: 15),
     bodyText1: TextStyle(fontSize: 15.0, fontWeight: FontWeight.w800),
     bodyText2: TextStyle(fontSize: 14.0),
-    button: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+    button: TextStyle(
+        fontSize: 13, fontWeight: FontWeight.w600, letterSpacing: 1.25),
     // labelLarge: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1),
     labelMedium: TextStyle(
       fontSize: 11,
@@ -49,7 +52,8 @@ class CustomThemeData {
         color: Colors.white,
         elevation: 0.0,
         margin: const EdgeInsets.only(top: 12.0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(_cardRadius))),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(_cardRadius))),
       );
 
   /// ListTile
@@ -59,7 +63,8 @@ class CustomThemeData {
       );
 
   /// Divider
-  get _divider => const DividerThemeData(thickness: 1, color: Colors.black26, space: 1);
+  get _divider =>
+      const DividerThemeData(thickness: 1, color: Colors.black26, space: 1);
 
   /// OutlinedButton
   get _outlinedButton => OutlinedButtonThemeData(
@@ -68,7 +73,8 @@ class CustomThemeData {
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
           elevation: 0,
           side: BorderSide(color: _primary, width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_buttonRadius)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(_buttonRadius)),
           minimumSize: const Size(100, 0),
           textStyle: _text.button,
         ),
@@ -88,7 +94,8 @@ class CustomThemeData {
   /// TextButton
   get _textButton => TextButtonThemeData(
           style: ButtonStyle(
-        textStyle: MaterialStateProperty.all(_text.button?.copyWith(letterSpacing: .7)),
+        textStyle: MaterialStateProperty.all(
+            _text.button?.copyWith(letterSpacing: .7)),
       ));
 
   /// BottomSheet
@@ -101,6 +108,8 @@ class CustomThemeData {
     return const InputDecorationTheme(
       isCollapsed: false,
       border: OutlineInputBorder(),
+      focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black54, width: 1.2)),
       focusColor: Colors.black54,
       floatingLabelBehavior: FloatingLabelBehavior.never,
       contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),

@@ -39,6 +39,7 @@ class _InitScreenState extends State<InitScreen> {
             onJoinFlat: cubit.joinFlat,
             onCreateFlat: cubit.createFlat,
             hasError: state.hasError,
+            isLoading: state.isLoading,
           );
 
         if (state is ShouldSetName)

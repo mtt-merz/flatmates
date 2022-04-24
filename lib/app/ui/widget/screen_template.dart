@@ -57,7 +57,7 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(widget.title, style: Theme.of(context).textTheme.headline6),
                       titlePadding: EdgeInsetsDirectional.only(
-                          start: SizeUtils.of(context).listScreenPadding.horizontal / 2,
+                          start: SizeUtils.of(context).horizontalPadding.horizontal / 2,
                           bottom: 16.0),
                     ),
                     actions: [IconButton(icon: const Icon(Icons.close), onPressed: pop)],
@@ -65,7 +65,7 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
 
                   // Body
                   SliverPadding(
-                    padding: SizeUtils.of(context).listScreenPadding,
+                    padding: SizeUtils.of(context).horizontalPadding,
                     sliver: SliverList(
                         delegate: SliverChildListDelegate.fixed([
                       // Container(height: SizeUtils.of(context).getScaledHeight(10)),

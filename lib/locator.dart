@@ -1,3 +1,4 @@
+import 'package:flatmates/app/repositories/expense_repository.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flatmates/app/repositories/repository.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
@@ -22,6 +23,7 @@ class Locator {
     // Repositories
     _registerRepository(UserRepository());
     _registerRepository(FlatRepository());
+    _registerRepository(ExpenseRepository());
 
     _getIt.registerSingleton<AuthenticationCubit>(AuthenticationCubit(),
         dispose: (cubit) => cubit.close());
