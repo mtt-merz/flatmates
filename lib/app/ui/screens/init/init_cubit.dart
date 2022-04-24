@@ -13,8 +13,9 @@ class Loading extends InitCubitState {}
 
 class ShouldInitializeFlat extends InitCubitState {
   final bool hasError;
+  final bool isLoading;
 
-  ShouldInitializeFlat({this.hasError = false});
+  ShouldInitializeFlat({this.hasError = false, this.isLoading = false});
 }
 
 class ShouldSetName extends InitCubitState {
@@ -45,7 +46,12 @@ class InitCubit extends Cubit<InitCubitState> {
   }
 
   void joinFlat(String invitationCode) {
-    // TODO: fetch flatId and load the flat by calling _flatRepository.init(flatId)
+    emit(ShouldInitializeFlat(isLoading: true));
+
+    FlatRepository.i
+        .fetchFromInvitationCode(invitationCode)
+        .then((_) => emit(ShouldSetName()))
+        .onError((_, __) => emit(ShouldInitializeFlat(hasError: true)));
   }
 
   void createFlat() => emit(ShouldSetName());
@@ -59,7 +65,8 @@ class InitCubit extends Cubit<InitCubitState> {
     final user = _userRepository.value;
     final mate = Mate(name,
         userId: user!.id,
-        colorValue: Colors.primaries[Random().nextInt(Colors.primaries.length)].value);
+        colorValue:
+            Colors.primaries[Random().nextInt(Colors.primaries.length)].value);
 
     if (_flatRepository.hasValue) {
       // Check for other mates with the same name

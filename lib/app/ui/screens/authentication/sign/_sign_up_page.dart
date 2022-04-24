@@ -35,6 +35,12 @@ class _SignUpPageState extends State<_SignUpPage> {
           title: 'New account',
           subtitle: 'Create a personal account and join the flatmates family!',
           onPop: Navigator.of(context).pop,
+          footer: SubmitButton(
+            onPressed: submit,
+            loading: state.isLoading,
+            error: state.error,
+            child: const Text('CONTINUE'),
+          ),
           children: [
             // Email
             FieldContainer(
@@ -76,17 +82,11 @@ class _SignUpPageState extends State<_SignUpPage> {
               Row(children: [
                 const Text('You already have an account?'),
                 TextButton(
-                  child: const Text('Login'),
                   onPressed: widget.goToSignInScreen,
+                  child: const Text('Login'),
                 ),
               ]),
           ],
-          footer: SubmitButton(
-            child: const Text('CONTINUE'),
-            onPressed: submit,
-            loading: state.isLoading,
-            error: state.error,
-          ),
         );
       });
 

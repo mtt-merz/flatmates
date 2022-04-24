@@ -7,14 +7,17 @@ import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart' show Logger;
 
-abstract class RepositoryCollection<T extends SerializableModel> with Repository<List<T>> {
+abstract class RepositoryCollection<T extends SerializableModel>
+    with Repository<List<T>> {
   Logger get _logger => Logger(runtimeType.toString());
   static final _persistence = Locator.get<PersistenceService>();
 
   /// Build a [T] instance starting from a json value
   final T Function(Map<String, dynamic>) builder;
 
-  RepositoryCollection({required this.builder});
+  RepositoryCollection({required this.builder}) {
+    fetch();
+  }
 
   late String key;
 

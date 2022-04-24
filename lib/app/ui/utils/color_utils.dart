@@ -5,7 +5,8 @@ class ColorUtils {
 
   ColorUtils(this.color);
 
-  Color get textColor => color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+  Color get textColor =>
+      color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
 
   static List<Color> get availableColors => [...Colors.primaries]
     ..removeAt(0)

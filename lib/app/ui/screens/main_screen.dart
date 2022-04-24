@@ -1,5 +1,5 @@
 import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
-import 'package:flatmates/app/ui/screens/expenses/expenses_screen/expenses_screen.dart';
+import 'package:flatmates/app/ui/screens/expenses/expenses_screen.dart';
 import 'package:flatmates/app/ui/screens/home/home_page.dart';
 import 'package:flatmates/app/ui/screens/profile/profile_screen.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';

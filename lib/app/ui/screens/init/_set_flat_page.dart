@@ -5,12 +5,14 @@ class _SetFlatPage extends StatefulWidget {
   final void Function() onCreateFlat;
 
   final bool hasError;
+  final bool isLoading;
 
   const _SetFlatPage({
     Key? key,
     required this.onJoinFlat,
     required this.onCreateFlat,
     required this.hasError,
+    required this.isLoading,
   }) : super(key: key);
 
   @override
@@ -41,17 +43,19 @@ class _SetFlatPageState extends State<_SetFlatPage> {
             ),
           ),
 
-          // [Error text]
-          if (widget.hasError)
-            const Text('Invitation code not recognized, please check it or ask for a new one'),
-
-          ElevatedButton(
-            child: const SizedBox(
-                width: double.infinity, child: Text('CONTINUE', textAlign: TextAlign.center)),
+          SubmitButton(
+            child: const Text('CONTINUE'),
             onPressed: () => widget.onJoinFlat(controller.value.text),
+            loading: widget.isLoading,
+            error: widget.hasError
+                ? 'Invitation code not recognized'
+                : null,
           ),
 
-          const SizedBox(width: double.infinity, height: 60, child: Center(child: Text('or'))),
+          const SizedBox(
+              width: double.infinity,
+              height: 60,
+              child: Center(child: Text('or'))),
 
           // Create a new flat
           OutlinedButton(

@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -6,24 +7,16 @@ export 'package:json_annotation/json_annotation.dart';
 part 'serializable_model.g.dart';
 
 @JsonSerializable(constructor: '', createFactory: false)
-abstract class SerializableModel implements _Serializable {
+abstract class SerializableModel with EquatableMixin implements _Serializable {
   @JsonKey(required: true)
   final String id;
 
   SerializableModel.init() : id = const Uuid().v4();
 
-  SerializableModel(this.id);
+  const SerializableModel(this.id);
 
   @override
-  bool operator ==(Object other) {
-    if (other is! SerializableModel) return false;
-    if (runtimeType != other.runtimeType) return false;
-
-    return other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
+  List<Object> get props => [id];
 }
 
 abstract class _Serializable {

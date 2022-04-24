@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/settings/settings_cubit.dart';
+import 'package:flatmates/app/ui/screens/settings/settings_cubit.dart';
 import 'package:flatmates/app/ui/widget/card_column.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +12,7 @@ class AccountSettingsPanel extends StatelessWidget {
         SettingTile(
           title: const Text('Sign out'),
           icon: const Icon(Icons.logout),
-          onTap: cubit.leaveFlat,
+          onTap: cubit.signOut,
         ),
         SettingTile(
           title: const Text('Leave flat'),
@@ -38,7 +38,12 @@ class SettingTile extends StatelessWidget {
   final Icon? icon;
   final void Function() onTap;
 
-  const SettingTile({Key? key, required this.title, this.subtitle, this.icon, required this.onTap})
+  const SettingTile(
+      {Key? key,
+      required this.title,
+      this.subtitle,
+      this.icon,
+      required this.onTap})
       : super(key: key);
 
   @override

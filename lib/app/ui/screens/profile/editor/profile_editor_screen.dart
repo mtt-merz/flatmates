@@ -4,8 +4,7 @@ import 'package:flatmates/app/ui/widget/screen_template.dart';
 import 'package:flatmates/app/ui/widget/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../models/flat/mate/mate.dart';
+import 'package:flatmates/app/models/flat/mate/mate.dart';
 
 class ProfileEditorScreen extends StatefulWidget {
   const ProfileEditorScreen({Key? key}) : super(key: key);
@@ -45,7 +44,8 @@ class _ProfileEditorScreenState extends State<ProfileEditorScreen> {
           title: 'Edit profile',
           subtitle: 'This is your account related to the current flat',
           footer: SubmitButton(
-            onPressed: () => cubit.save().then((_) => Navigator.of(context).pop()),
+            onPressed: () =>
+                cubit.save().then((_) => Navigator.of(context).pop()),
             child: const Text('SAVE'),
           ),
           children: mate == null
@@ -56,7 +56,8 @@ class _ProfileEditorScreenState extends State<ProfileEditorScreen> {
                     label: 'name',
                     child: TextField(
                       controller: nameController,
-                      decoration: const InputDecoration(hintText: 'Insert your name'),
+                      decoration:
+                          const InputDecoration(hintText: 'Insert your name'),
                       textCapitalization: TextCapitalization.words,
                       onChanged: cubit.setName,
                     ),
@@ -67,7 +68,8 @@ class _ProfileEditorScreenState extends State<ProfileEditorScreen> {
                     label: 'surname',
                     child: TextField(
                       controller: surnameController,
-                      decoration: const InputDecoration(hintText: 'Insert your surname (optional)'),
+                      decoration: const InputDecoration(
+                          hintText: 'Insert your surname (optional)'),
                       textCapitalization: TextCapitalization.words,
                       onChanged: cubit.setSurname,
                     ),
@@ -85,8 +87,10 @@ class _ProfileEditorScreenState extends State<ProfileEditorScreen> {
                         crossAxisSpacing: 6,
                         children: cubit.availableColors
                             .map((color) => IconButton(
-                                  padding: EdgeInsets.all(color.value == mate.colorValue ? 0 : 8),
-                                  icon: ClipOval(child: Container(color: color)),
+                                  padding: EdgeInsets.all(
+                                      color.value == mate.colorValue ? 0 : 8),
+                                  icon:
+                                      ClipOval(child: Container(color: color)),
                                   onPressed: () => cubit.setColor(color),
                                 ))
                             .toList()),

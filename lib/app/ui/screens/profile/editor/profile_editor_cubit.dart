@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileEditorCubit extends Cubit<Mate?> {
+  late Mate mate;
+
   ProfileEditorCubit() : super(null) {
     final userId = UserRepository.i.value!.id;
     mate = FlatRepository.i.loggedMate(userId)!;
 
     emit(mate);
   }
-
-  late Mate mate;
 
   List<Color> get availableColors => ColorUtils.availableColors..removeAt(0);
 

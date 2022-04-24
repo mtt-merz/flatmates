@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ScreenTemplate extends StatefulWidget {
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final List<Widget> children;
   final Widget? footer;
   final FloatingActionButton? floatingActionButton;
@@ -13,7 +13,7 @@ class ScreenTemplate extends StatefulWidget {
   const ScreenTemplate({
     Key? key,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     required this.children,
     this.onPop,
     this.floatingActionButton,
@@ -57,7 +57,7 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(widget.title, style: Theme.of(context).textTheme.headline6),
                       titlePadding: EdgeInsetsDirectional.only(
-                          start: SizeUtils.of(context).listScreenPadding.horizontal / 2,
+                          start: SizeUtils.of(context).horizontalPadding.horizontal / 2,
                           bottom: 16.0),
                     ),
                     actions: [IconButton(icon: const Icon(Icons.close), onPressed: pop)],
@@ -65,14 +65,14 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
 
                   // Body
                   SliverPadding(
-                    padding: SizeUtils.of(context).listScreenPadding,
+                    padding: SizeUtils.of(context).horizontalPadding,
                     sliver: SliverList(
                         delegate: SliverChildListDelegate.fixed([
                       // Container(height: SizeUtils.of(context).getScaledHeight(10)),
                       // Text(widget.title,
                       //     textAlign: TextAlign.start, style: Theme.of(context).textTheme.headline4),
                       // SizedBox(height: SizeUtils.of(context).getScaledHeight(1)),
-                      Text(widget.subtitle),
+                      widget.subtitle != null ? Text(widget.subtitle!) : const SizedBox(),
                       SizedBox(height: SizeUtils.of(context).getScaledHeight(4)),
                       ...widget.children,
                     ])),

@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/settings/account/account_settings_panel.dart';
+import 'package:flatmates/app/ui/screens/settings/account/account_settings_panel.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flatmates/app/ui/widget/card_emphasis.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
       builder: (context, state) {
-        if (state is! Ready) return const Center(child: CircularProgressIndicator());
+        if (state is! Ready)
+          return const Center(child: CircularProgressIndicator());
 
         return Scaffold(
           body: CustomScrollView(
@@ -35,12 +36,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 pinned: true,
                 expandedHeight: 120,
                 flexibleSpace: FlexibleSpaceBar(
-                  titlePadding: const EdgeInsetsDirectional.only(start: 24, bottom: 16.0),
+                  titlePadding:
+                      const EdgeInsetsDirectional.only(start: 24, bottom: 16.0),
                   title: Row(
                     children: [
                       CircleAvatar(backgroundColor: cubit.mateColor, radius: 5),
                       const SizedBox(width: 10),
-                      Text('${cubit.mateName} ${cubit.mateSurname}',
+                      Text('${cubit.mateName} ${cubit.mateSurname ?? ''}',
                           style: Theme.of(context).textTheme.titleSmall),
                     ],
                   ),
@@ -68,16 +70,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               SliverPadding(
-                padding: SizeUtils.of(context).listScreenPadding,
+                padding: SizeUtils.of(context).horizontalPadding,
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
                     if (cubit.userIsAnonymous)
                       CardEmphasis(
                         title: 'Register an account!',
-                        subtitle: 'Right now, if you logout or uninstall the app'
+                        subtitle:
+                            'Right now, if you logout or uninstall the app'
                             ' you will lose all your data',
                         image: Image.asset('assets/images/marketing_1.png'),
-                        onTap: () => Navigator.of(context).pushNamed('/authentication/sign_up'),
+                        onTap: () => Navigator.of(context)
+                            .pushNamed('/authentication/sign_up'),
                       ),
 
                     // Settings
@@ -96,7 +100,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required int index,
   }) {
     final List<Widget> children = [];
-    if (icon != null) children.addAll([Icon(icon.icon, size: 22), const SizedBox(width: 12)]);
+    if (icon != null)
+      children.addAll([Icon(icon.icon, size: 22), const SizedBox(width: 12)]);
     children.add(content);
 
     return PopupMenuItem<int>(

@@ -13,12 +13,24 @@ class SettingsCubit extends Cubit<SettingsCubitState> {
 
   User get _user => UserRepository.i.value!;
 
+  void signOut() async {
+    if (_user.isAnonymous) {
+      UserRepository.i.remove();
+      FlatRepository.i.removeMate(_user.id);
+    }
+
+    try {
+      await Locator.get<AuthenticationService>().signOut();
+    } on AuthenticationError catch (_) {}
+  }
+
   void leaveFlat() {
     UserRepository.i.update(_user..flatIds.remove(_user.currentFlatId));
     FlatRepository.i.removeMate(_user.id);
   }
 
-  void deleteAccount({required Future<bool> Function() onRequiresRecentLogin}) async {
+  void deleteAccount(
+      {required Future<bool> Function() onRequiresRecentLogin}) async {
     try {
       await Locator.get<AuthenticationService>().deleteAccount();
 
@@ -26,8 +38,9 @@ class SettingsCubit extends Cubit<SettingsCubitState> {
       FlatRepository.i.removeMate(_user.id);
     } on AuthenticationError catch (error) {
       if (error.code == 'requires-recent-login')
-        onRequiresRecentLogin().then(
-            (value) => value ? deleteAccount(onRequiresRecentLogin: onRequiresRecentLogin) : null);
+        onRequiresRecentLogin().then((value) => value
+            ? deleteAccount(onRequiresRecentLogin: onRequiresRecentLogin)
+            : null);
     }
   }
 }

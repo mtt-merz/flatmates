@@ -1,21 +1,21 @@
-import 'package:flatmates/app/models/expense/expense.dart';
 import 'package:flatmates/app/ui/widget/field_container.dart';
 import 'package:flatmates/app/ui/widget/form_dialog.dart';
+import 'package:flatmates/app/ui/widget/mate_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'expense_adder_cubit.dart';
+import 'add_expense_cubit.dart';
 
-class ExpenseAdderDialog extends StatefulWidget {
-  const ExpenseAdderDialog({Key? key}) : super(key: key);
+class AddExpenseDialog extends StatefulWidget {
+  const AddExpenseDialog({Key? key}) : super(key: key);
 
   @override
-  _ExpenseAdderDialogState createState() => _ExpenseAdderDialogState();
+  _AddExpenseDialogState createState() => _AddExpenseDialogState();
 }
 
-class _ExpenseAdderDialogState extends State<ExpenseAdderDialog> {
-  final cubit = ExpenseAdderCubit();
+class _AddExpenseDialogState extends State<AddExpenseDialog> {
+  final cubit = AddExpenseCubit();
 
   @override
   void dispose() {
@@ -26,34 +26,45 @@ class _ExpenseAdderDialogState extends State<ExpenseAdderDialog> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
-      builder: (context, Expense? expense) {
-        if (expense == null) return const Center(child: CircularProgressIndicator());
+      builder: (context, state) {
+        if (state is! Editing)
+          return const Center(child: CircularProgressIndicator());
 
         return FormDialog(
           title: 'Add expense',
+          onCancel: Navigator.of(context).pop,
+          onSubmit: cubit.canSubmit
+              ? () {
+                  cubit.submit();
+                  Navigator.of(context).pop();
+                }
+              : null,
           children: [
             // Expense amount
             FieldContainer(
-              label: 'AMOUNT',
+              label: 'amount',
               child: TextFormField(
                 autofocus: true,
                 style: Theme.of(context).textTheme.headline2,
                 inputFormatters: [_ExpenseTextFormatter()],
-                decoration: const InputDecoration(hintText: '0', suffix: Text(' €')),
+                decoration:
+                    const InputDecoration(hintText: '0', suffix: Text(' €')),
                 textInputAction: TextInputAction.next,
-                keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: false),
-                onChanged: (value) => setState(() => cubit.expenseAmount = double.parse(value)),
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: false, decimal: false),
+                onChanged: cubit.setAmount,
               ),
             ),
 
             // Expense description
             FieldContainer(
-              label: 'DESCRIPTION',
+              label: 'description',
               child: TextField(
                 style: Theme.of(context).textTheme.subtitle1,
-                decoration: const InputDecoration(label: Text('What is this expense for?')),
+                decoration: const InputDecoration(
+                    label: Text('What is this expense for?')),
                 textCapitalization: TextCapitalization.sentences,
-                onChanged: (value) => setState(() => cubit.expenseDescription = value),
+                onChanged: cubit.setDescription,
               ),
             ),
 
@@ -61,22 +72,16 @@ class _ExpenseAdderDialogState extends State<ExpenseAdderDialog> {
             FieldContainer(
               label: 'ADDRESSES',
               child: Wrap(
+                spacing: 8,
                 children: cubit.mates
-                    .map((mate) => ChoiceChip(
-                          elevation: 0.0,
-                          pressElevation: 0.0,
-                          visualDensity: const VisualDensity(horizontal: 4, vertical: 4),
-                          label: Text(mate.name),
-                          selected: expense.addresseeIds.any((mateName) => mateName == mate.name),
-                          onSelected: (value) =>
-                              value ? cubit.addAddressee('test') : cubit.addAddressee(mate.name),
-                        ))
+                    .map((mate) => MateChip(mate,
+                        onToggle: (value) => value
+                            ? cubit.addAddressee(mate.userId)
+                            : cubit.removeAddressee(mate.userId)))
                     .toList(),
               ),
             ),
           ],
-          onSubmit: cubit.canSubmit ? () => Navigator.of(context).pop(expense) : null,
-          onCancel: Navigator.of(context).pop,
         );
       });
 }
@@ -89,11 +94,13 @@ class _ExpenseTextFormatter extends TextInputFormatter {
   ) {
     TextEditingValue buildTextEditingValue(String text) => TextEditingValue(
           text: text,
-          selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+          selection:
+              TextSelection(baseOffset: text.length, extentOffset: text.length),
         );
 
     if (newValue.text.isEmpty) return buildTextEditingValue('');
-    if (oldValue.text.isEmpty && newValue.text == '.') return buildTextEditingValue('0.');
+    if (oldValue.text.isEmpty && newValue.text == '.')
+      return buildTextEditingValue('0.');
 
     try {
       double.parse(newValue.text);

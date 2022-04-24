@@ -19,6 +19,18 @@ class FlatRepository with Repository<Flat> {
     addEvent(Flat.fromJson(rawFlat));
   }
 
+  Future<void> fetchFromInvitationCode(String invitationCode) async {
+    final result = await _persistence.getAll(Flat.key);
+
+    for (Map<String, dynamic> rawFlat in result)
+      if (rawFlat["invitationCode"] == invitationCode) {
+        await fetch(rawFlat['id']);
+        return;
+      }
+
+    throw FetchRepositoryFailure<FlatRepository>(invitationCode);
+  }
+
   Future<void> insert(Flat flat) {
     addEvent(flat);
     return _persistence.insert(Flat.key, flat);
@@ -42,10 +54,11 @@ class FlatRepository with Repository<Flat> {
 
   Future<void> updateMateUserId(String oldUserId, String newUserId) {
     final oldMate = loggedMate(oldUserId);
+    if (oldMate == null) throw 'No logged mate found';
 
     return update((flat) => flat
       ..mates.remove(oldMate)
-      ..mates.add(oldMate!.copyWith(userId: newUserId)));
+      ..mates.add(oldMate.copyWith(userId: newUserId)));
   }
 
   Future<void> removeMate(String userId) =>

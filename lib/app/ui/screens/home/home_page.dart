@@ -1,8 +1,7 @@
-import 'package:flatmates/app/ui/screens/expenses/expense_adder/expense_adder_dialog.dart';
+import 'package:flatmates/app/ui/screens/expenses/add_expense/add_expense_dialog.dart';
 import 'package:flatmates/app/ui/screens/home/home_cubit.dart';
 import 'package:flatmates/app/ui/utils/size_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,37 +23,36 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
-      builder: (context, AsyncSnapshot snapshot) {
+      builder: (context, state) {
+        if (state is! Ready)
+          return const Center(child: CircularProgressIndicator());
+
         return Scaffold(
-          body: Padding(
+          appBar: AppBar(
+            title: InkWell(
+              onTap: () => Navigator.of(context).pushNamed('/flat'),
+              child: Text(cubit.flatName ?? 'My Flat',
+                  style: Theme.of(context).textTheme.bodyText1),
+            ),
+          ),
+          body: ListView(
             padding: SizeUtils.of(context).basePadding,
-            child: CustomScrollView(slivers: [
-              SliverAppBar(
-                title: Text(cubit.flatName),
-                pinned: true,
-                backgroundColor: Colors.transparent,
-                expandedHeight: 150,
-                systemOverlayStyle: SystemUiOverlayStyle.light,
-              ),
-              SliverList(
-                  delegate: SliverChildListDelegate([
-                Card(
-                  child: ListTile(
-                    title: const Text('Expenses'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => showDialog(
-                          barrierDismissible: false,
-                          useSafeArea: true,
-                          barrierColor: Colors.black87,
-                          context: context,
-                          builder: (context) => const ExpenseAdderDialog()),
-                    ),
-                    onTap: () => Navigator.of(context).pushNamed('/expenses'),
+            children: [
+              Card(
+                child: ListTile(
+                  title: const Text('Expenses'),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () => showDialog(
+                        barrierDismissible: false,
+                        useSafeArea: true,
+                        context: context,
+                        builder: (context) => const AddExpenseDialog()),
                   ),
+                  onTap: () => Navigator.of(context).pushNamed('/expenses'),
                 ),
-              ]))
-            ]),
+              ),
+            ],
           ),
         );
       });
