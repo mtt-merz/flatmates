@@ -8,7 +8,11 @@ abstract class SettingsCubitState {}
 
 class Ready extends SettingsCubitState {}
 
-class RequireRecentLogin extends SettingsCubitState {}
+class RequireRecentLogin extends SettingsCubitState {
+  final void Function() retryMethodInvocation;
+
+  RequireRecentLogin(this.retryMethodInvocation);
+}
 
 class SettingsCubit extends Cubit<SettingsCubitState> {
   SettingsCubit() : super(Ready());
@@ -20,7 +24,8 @@ class SettingsCubit extends Cubit<SettingsCubitState> {
 
   void signOut() {
     if (_user.isAnonymous) return deleteAccount();
-    _catchAuthenticationError(() => _authenticationService.signOut());
+    _catchAuthenticationError(() => _authenticationService.signOut(),
+        methodInvocation: signOut);
   }
 
   void leaveFlat() {
@@ -31,15 +36,16 @@ class SettingsCubit extends Cubit<SettingsCubitState> {
   void deleteAccount() => _catchAuthenticationError(() async {
         await _authenticationService.deleteAccount();
         await UserRepository.i.remove();
-      });
+      }, methodInvocation: deleteAccount);
 
-  Future<void> _catchAuthenticationError(Future<void> Function() code) async {
+  Future<void> _catchAuthenticationError(Future<void> Function() code,
+      {required void Function() methodInvocation}) async {
     try {
       await code();
     } on AuthenticationError catch (error) {
       switch (error.code) {
         case 'requires-recent-login':
-          emit(RequireRecentLogin());
+          emit(RequireRecentLogin(methodInvocation));
       }
     }
   }

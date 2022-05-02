@@ -57,7 +57,8 @@ class FirebaseAuthWrapper extends AuthenticationService {
             'User account updated (EMAIL+PASSWORD) [${credential.user!.uid}]');
         return credential.user!.uid;
       }).onError<FirebaseAuthException>((error, _) {
-        log('Error while updating user account (EMAIL+PASSWORD)', error: error);
+        _logger.warning(
+            'Error while updating user account (EMAIL+PASSWORD)', error);
         throw _parseError(error);
       });
     }
@@ -69,7 +70,7 @@ class FirebaseAuthWrapper extends AuthenticationService {
           .info('User registered (EMAIL+PASSWORD) [${credential.user!.uid}]');
       return credential.user!.uid;
     }).onError<FirebaseAuthException>((error, _) {
-      log('Error while registering user (EMAIL+PASSWORD)', error: error);
+      _logger.warning('Error while registering user (EMAIL+PASSWORD)', error);
       throw _parseError(error);
     });
   }

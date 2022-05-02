@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'add_expense_cubit.dart';
+import 'set_expense_cubit.dart';
 
 class AddExpenseDialog extends StatefulWidget {
   const AddExpenseDialog({Key? key}) : super(key: key);

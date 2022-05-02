@@ -24,7 +24,7 @@ class UserRepository with Repository<User?> {
 
   Future<void> update(User user) async {
     await _persistence.update(User.key, user);
-    addEvent(user);
+    addBreakingEvent(user);
   }
 
   Future<void> updateFunctional(User Function(User) updater) =>

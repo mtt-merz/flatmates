@@ -55,11 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: const Icon(Icons.edit),
                               index: 0,
                             ),
-                            // buildPopupMenuItem(
-                            //   content: const Text('Set color'),
-                            //   icon: const Icon(Icons.color_lens),
-                            //   index: 1,
-                            // ),
                           ]),
                 ],
               ),

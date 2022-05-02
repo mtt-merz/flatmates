@@ -77,7 +77,6 @@ class _SignUpPageState extends State<_SignUpPage> {
                         setState(() => hidePassword = !hidePassword),
                   ),
                 ),
-                onSubmitted: (_) => submit(),
               ),
             ),
 
@@ -87,7 +86,6 @@ class _SignUpPageState extends State<_SignUpPage> {
               child: TextField(
                 controller: repeatPasswordController,
                 onChanged: (_) => setState(() {}),
-                onEditingComplete: submit,
                 keyboardType: TextInputType.visiblePassword,
                 textInputAction: TextInputAction.done,
                 obscureText: hideRepeatPassword,

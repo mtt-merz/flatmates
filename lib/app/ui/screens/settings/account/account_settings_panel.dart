@@ -13,9 +13,9 @@ class AccountSettingsPanel extends StatelessWidget {
         bloc: cubit,
         listener: (context, state) {
           if (state is RequireRecentLogin)
-            Navigator.of(context)
-                .pushNamed('/authentication/check')
-                .then((value) => value as String);
+            Navigator.of(context).pushNamed('/authentication/check').then(
+                (userId) =>
+                    userId != null ? state.retryMethodInvocation : null);
         },
         child: CardColumn(children: [
           SettingTile(
@@ -25,8 +25,8 @@ class AccountSettingsPanel extends StatelessWidget {
           ),
           SettingTile(
             title: const Text('Leave flat'),
-            subtitle: const Text(
-                'If there are no more mates in the flat, it will be automatically deleted'),
+            subtitle: const Text('If there are no more mates in the flat, '
+                'it will be automatically deleted'),
             icon: const Icon(Icons.home),
             onTap: cubit.leaveFlat,
           ),

@@ -24,7 +24,7 @@ mixin Repository<T> {
   Stream<T> get stream => _streamController.stream;
   final BehaviorSubject<T> _streamController = BehaviorSubject();
 
-  bool get hasValue => _streamController.hasValue;
+  bool get hasValue => _streamController.value != null;
 
   T? get value => _streamController.valueOrNull;
 
