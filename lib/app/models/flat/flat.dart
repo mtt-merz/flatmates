@@ -23,9 +23,9 @@ class Flat extends SerializableModel {
   @JsonKey(required: true, defaultValue: [])
   List<CommonSpace> commonSpaces;
 
-  Flat({required Mate mate})
+  Flat({required Mate mate, List<CommonSpace>? commonSpaces})
       : mates = [mate],
-        commonSpaces = [],
+        commonSpaces = commonSpaces ?? [],
         invitationCode = DateTime.now().millisecondsSinceEpoch.toString(),
         super.init();
 

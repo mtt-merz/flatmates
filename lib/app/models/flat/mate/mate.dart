@@ -13,13 +13,16 @@ class Mate extends Equatable {
   @JsonKey()
   final String? surname;
 
+  String get nickname => surname == null ? name : '$name $surname';
+
   @JsonKey(required: true)
   final String userId;
 
   @JsonKey(required: true)
   final int colorValue;
 
-  const Mate(this.name, {required this.userId, required this.colorValue, this.surname});
+  const Mate(this.name,
+      {required this.userId, required this.colorValue, this.surname});
 
   const Mate._(this.userId, this.name, this.surname, this.colorValue);
 
@@ -27,11 +30,10 @@ class Mate extends Equatable {
 
   Map<String, dynamic> toJson() => _$MateToJson(this);
 
-  Mate copyWith({String? userId, String? name, String? surname, int? colorValue}) => Mate._(
-      userId ?? this.userId,
-      name ?? this.name,
-      surname ?? this.surname,
-      colorValue ?? this.colorValue);
+  Mate copyWith(
+          {String? userId, String? name, String? surname, int? colorValue}) =>
+      Mate._(userId ?? this.userId, name ?? this.name, surname ?? this.surname,
+          colorValue ?? this.colorValue);
 
   @override
   List<Object?> get props => [userId, name, surname, colorValue];

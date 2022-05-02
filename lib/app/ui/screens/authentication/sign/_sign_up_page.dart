@@ -3,7 +3,8 @@ part of 'sign_screen.dart';
 class _SignUpPage extends StatefulWidget {
   final VoidCallback? goToSignInScreen;
 
-  const _SignUpPage({Key? key, required this.goToSignInScreen}) : super(key: key);
+  const _SignUpPage({Key? key, required this.goToSignInScreen})
+      : super(key: key);
 
   @override
   State<_SignUpPage> createState() => _SignUpPageState();
@@ -14,7 +15,11 @@ class _SignUpPageState extends State<_SignUpPage> {
 
   final TextEditingController mailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController repeatPasswordController = TextEditingController();
+  final TextEditingController repeatPasswordController =
+      TextEditingController();
+
+  bool hidePassword = true;
+  bool hideRepeatPassword = true;
 
   @override
   void dispose() {
@@ -62,6 +67,17 @@ class _SignUpPageState extends State<_SignUpPage> {
                 onChanged: (_) => setState(() {}),
                 keyboardType: TextInputType.visiblePassword,
                 textInputAction: TextInputAction.next,
+                obscureText: hidePassword,
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(hidePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                    onPressed: () =>
+                        setState(() => hidePassword = !hidePassword),
+                  ),
+                ),
+                onSubmitted: (_) => submit(),
               ),
             ),
 
@@ -74,6 +90,17 @@ class _SignUpPageState extends State<_SignUpPage> {
                 onEditingComplete: submit,
                 keyboardType: TextInputType.visiblePassword,
                 textInputAction: TextInputAction.done,
+                obscureText: hideRepeatPassword,
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(hideRepeatPassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                    onPressed: () => setState(
+                        () => hideRepeatPassword = !hideRepeatPassword),
+                  ),
+                ),
+                onSubmitted: (_) => submit(),
               ),
             ),
 
@@ -95,7 +122,7 @@ class _SignUpPageState extends State<_SignUpPage> {
       email: mailController.value.text,
       password: passwordController.value.text,
       repeatPassword: repeatPasswordController.value.text,
-      onSucceed: () => Navigator.of(context).pop(true),
+      onSucceed: (userId) => Navigator.of(context).pop(userId),
     );
   }
 }

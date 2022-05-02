@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flutter/material.dart';
 
 class CardEmphasis extends StatelessWidget {

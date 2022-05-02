@@ -23,18 +23,12 @@ class _InitScreenState extends State<InitScreen> {
   final cubit = InitCubit();
 
   @override
-  void dispose() {
-    super.dispose();
-    cubit.close();
-  }
-
-  @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
       builder: (context, state) {
         if (state is Loading) return const SplashScreen();
 
-        if (state is ShouldInitializeFlat)
+        if (state is ShouldJoinOrCreateFlat)
           return _SetFlatPage(
             onJoinFlat: cubit.joinFlat,
             onCreateFlat: cubit.createFlat,

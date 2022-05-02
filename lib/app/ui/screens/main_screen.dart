@@ -1,9 +1,8 @@
-import 'package:flatmates/app/ui/screens/chores/chores_screen.dart';
-import 'package:flatmates/app/ui/screens/expenses/expenses_screen.dart';
+import 'package:flatmates/app/ui/screens/chores/chores_page.dart';
+import 'package:flatmates/app/ui/screens/expenses/expenses_page.dart';
 import 'package:flatmates/app/ui/screens/home/home_page.dart';
 import 'package:flatmates/app/ui/screens/profile/profile_screen.dart';
-import 'package:flatmates/app/ui/utils/size_utils.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
@@ -39,7 +38,12 @@ class _MainScreenState extends State<MainScreen> {
           controller: pageController,
           physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (page) => setState(() => this.page = page),
-          children: [HomePage(), const ExpensesPage(), const ChoresPage(), ProfileScreen()],
+          children: const [
+            HomePage(),
+            ExpensesPage(),
+            ChoresPage(),
+            ProfileScreen()
+          ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: page,
@@ -50,13 +54,16 @@ class _MainScreenState extends State<MainScreen> {
             } on Object catch (_) {}
           }),
           items: [
-            buildBottomNavigatorBarItem('Home', icon: Icons.home_outlined, activeIcon: Icons.home),
+            buildBottomNavigatorBarItem('Home',
+                icon: Icons.home_outlined, activeIcon: Icons.home),
             buildBottomNavigatorBarItem('Expenses',
-                icon: Icons.circle_outlined, activeIcon: Icons.circle),
+                icon: Icons.monetization_on_outlined,
+                activeIcon: Icons.monetization_on),
             buildBottomNavigatorBarItem('Chores',
                 icon: Icons.circle_outlined, activeIcon: Icons.circle),
             buildBottomNavigatorBarItem('Account',
-                icon: Icons.account_circle_outlined, activeIcon: Icons.account_circle),
+                icon: Icons.account_circle_outlined,
+                activeIcon: Icons.account_circle),
           ],
         ),
       );
@@ -80,7 +87,9 @@ class _MainScreenState extends State<MainScreen> {
                 Center(
                   child: Text(label,
                       style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            color: Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+                            color: Theme.of(context)
+                                .bottomNavigationBarTheme
+                                .selectedItemColor,
                           )),
                 )
               ],

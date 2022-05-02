@@ -19,19 +19,23 @@ class FirebaseAuthWrapper extends AuthenticationService {
   String? get currentUser => _auth.currentUser?.uid;
 
   @override
-  Future<String> signAnonymously() => _auth.signInAnonymously().then((credential) {
+  Future<String> signAnonymously() =>
+      _auth.signInAnonymously().then((credential) {
         _logger.info('User signed (ANONYMOUS) [${credential.user!.uid}]');
         return credential.user!.uid;
       });
 
   @override
-  Future<String> loginWithEmailAndPassword(String email, String password) async {
+  Future<String> loginWithEmailAndPassword(
+      String email, String password) async {
     if (_auth.currentUser != null) {
       assert(_auth.currentUser!.isAnonymous);
       await deleteAccount();
     }
 
-    return _auth.signInWithEmailAndPassword(email: email, password: password).then((credential) {
+    return _auth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((credential) {
       _logger.info('User logged (EMAIL+PASSWORD) [${credential.user!.uid}]');
       return credential.user!.uid;
     }).onError<FirebaseAuthException>((error, _) {
@@ -46,9 +50,11 @@ class FirebaseAuthWrapper extends AuthenticationService {
     if (_auth.currentUser != null) {
       assert(_auth.currentUser!.isAnonymous);
       return _auth.currentUser!
-          .linkWithCredential(EmailAuthProvider.credential(email: email, password: password))
+          .linkWithCredential(
+              EmailAuthProvider.credential(email: email, password: password))
           .then((credential) {
-        _logger.info('User account updated (EMAIL+PASSWORD) [${credential.user!.uid}]');
+        _logger.info(
+            'User account updated (EMAIL+PASSWORD) [${credential.user!.uid}]');
         return credential.user!.uid;
       }).onError<FirebaseAuthException>((error, _) {
         log('Error while updating user account (EMAIL+PASSWORD)', error: error);
@@ -59,7 +65,8 @@ class FirebaseAuthWrapper extends AuthenticationService {
     return _auth
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((credential) {
-      _logger.info('User registered (EMAIL+PASSWORD) [${credential.user!.uid}]');
+      _logger
+          .info('User registered (EMAIL+PASSWORD) [${credential.user!.uid}]');
       return credential.user!.uid;
     }).onError<FirebaseAuthException>((error, _) {
       log('Error while registering user (EMAIL+PASSWORD)', error: error);
@@ -68,7 +75,8 @@ class FirebaseAuthWrapper extends AuthenticationService {
   }
 
   @override
-  Future<void> signOut() => _auth.signOut().then((value) => _logger.info('User signed out'));
+  Future<void> signOut() =>
+      _auth.signOut().then((value) => _logger.info('User signed out'));
 
   @override
   Future<void> deleteAccount() async {

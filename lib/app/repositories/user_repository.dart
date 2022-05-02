@@ -14,12 +14,12 @@ class UserRepository with Repository<User?> {
     final rawUser = await _persistence.getFromId(User.key, userId);
     if (rawUser == null) throw FetchRepositoryFailure<UserRepository>(userId);
 
-    addEvent(User.fromJson(rawUser));
+    addBreakingEvent(User.fromJson(rawUser));
   }
 
   Future<void> insert(User user) async {
     await _persistence.insert(User.key, user);
-    addEvent(user);
+    addBreakingEvent(user);
   }
 
   Future<void> update(User user) async {
@@ -27,12 +27,15 @@ class UserRepository with Repository<User?> {
     addEvent(user);
   }
 
-  /// If [value] is null, throw an exception
-  Future<void> updateFunctional(User Function(User) updater) => update(updater(value!));
+  Future<void> updateFunctional(User Function(User) updater) =>
+      update(updater(value!));
 
-  /// If [value] is null, throw an exception
   Future<void> remove() async {
     await _persistence.remove(User.key, value!);
-    addEvent(null);
+    addBreakingEvent(null);
   }
+
+  Future<void> leaveCurrentFlat() => updateFunctional((user) => user
+    ..flatIds.remove(user.currentFlatId)
+    ..currentFlatId = null);
 }

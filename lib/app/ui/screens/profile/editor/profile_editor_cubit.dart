@@ -27,7 +27,6 @@ class ProfileEditorCubit extends Cubit<Mate?> {
   }
 
   Future<void> save() {
-    print(mate);
     return FlatRepository.i.updateMate(mate);
   }
 }

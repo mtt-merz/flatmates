@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flatmates/app/models/flat/mate/mate.dart';
 import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flatmates/app/repositories/user_repository.dart';
-import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,11 +10,11 @@ abstract class InitCubitState {}
 
 class Loading extends InitCubitState {}
 
-class ShouldInitializeFlat extends InitCubitState {
+class ShouldJoinOrCreateFlat extends InitCubitState {
   final bool hasError;
   final bool isLoading;
 
-  ShouldInitializeFlat({this.hasError = false, this.isLoading = false});
+  ShouldJoinOrCreateFlat({this.hasError = false, this.isLoading = false});
 }
 
 class ShouldSetName extends InitCubitState {
@@ -28,30 +27,31 @@ class ShouldSetName extends InitCubitState {
 class Initialized extends InitCubitState {}
 
 class InitCubit extends Cubit<InitCubitState> {
-  final _userRepository = Locator.get<UserRepository>();
-  final _flatRepository = Locator.get<FlatRepository>();
-
   InitCubit() : super(Loading()) {
-    _userRepository.stream.listen((user) async {
-      if (user == null) return;
-
-      if (user.flatIds.isEmpty) return emit(ShouldInitializeFlat());
-
-      if (user.currentFlatId == null)
-        await _userRepository.update(user..currentFlatId = user.flatIds.first);
-
-      await _flatRepository.fetch(user.currentFlatId!);
+    FlatRepository.i.breakingStream.listen((flat) async {
+      if (flat == null) return emit(ShouldJoinOrCreateFlat());
       emit(Initialized());
     });
+    // UserRepository.i.stream.listen((user) async {
+    //   if (user == null) return;
+    //
+    //   if (user.flatIds.isEmpty) return emit(ShouldJoinOrCreateFlat());
+    //
+    //   if (user.currentFlatId == null)
+    //     await UserRepository.i.update(user..currentFlatId = user.flatIds.first);
+    //
+    //   await FlatRepository.i.fetch(user.currentFlatId!);
+    //   emit(Initialized());
+    // });
   }
 
   void joinFlat(String invitationCode) {
-    emit(ShouldInitializeFlat(isLoading: true));
+    emit(ShouldJoinOrCreateFlat(isLoading: true));
 
     FlatRepository.i
         .fetchFromInvitationCode(invitationCode)
         .then((_) => emit(ShouldSetName()))
-        .onError((_, __) => emit(ShouldInitializeFlat(hasError: true)));
+        .onError((_, __) => emit(ShouldJoinOrCreateFlat(hasError: true)));
   }
 
   void createFlat() => emit(ShouldSetName());
@@ -62,26 +62,36 @@ class InitCubit extends Cubit<InitCubitState> {
     if (name.isEmpty) return emit(ShouldSetName(hasError: true));
 
     emit(ShouldSetName(isLoading: true));
-    final user = _userRepository.value;
+    final user = UserRepository.i.value;
     final mate = Mate(name,
         userId: user!.id,
         colorValue:
             Colors.primaries[Random().nextInt(Colors.primaries.length)].value);
 
-    if (_flatRepository.hasValue) {
+    if (FlatRepository.i.value != null) {
       // Check for other mates with the same name
-      if (_flatRepository.value.mates.any((element) => element.name == name))
+      if (FlatRepository.i.value!.mates.any((m) => m.name == name))
         emit(ShouldSetName(hasError: true));
 
-      await _flatRepository.update((flat) => flat..mates.add(mate));
+      await FlatRepository.i.update((flat) => flat..mates.add(mate));
     } else
-      await _flatRepository.insert(Flat(mate: mate));
+      await FlatRepository.i
+          .insert(Flat(mate: mate, commonSpaces: _defaultCommonSpaces));
 
-    final flat = _flatRepository.value;
-    await _userRepository.update(user
+    final flat = FlatRepository.i.value!;
+    await UserRepository.i.update(user
       ..flatIds.add(flat.id)
       ..currentFlatId = flat.id);
 
     emit(Initialized());
   }
+
+  List<CommonSpace> get _defaultCommonSpaces => [
+        CommonSpace('Kitchen', color: Colors.amber, enabled: true),
+        CommonSpace('Bathroom', color: Colors.cyan, enabled: true),
+        CommonSpace('Entrance', color: Colors.deepPurpleAccent),
+        CommonSpace('Living Room', color: Colors.deepOrange),
+        CommonSpace('Bedroom', color: Colors.blue),
+        CommonSpace('Terrace', color: Colors.pinkAccent),
+      ];
 }

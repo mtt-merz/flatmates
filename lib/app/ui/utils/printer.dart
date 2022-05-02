@@ -4,13 +4,14 @@ import 'package:intl/intl.dart';
 class Printer {
   /// General utils
 
-  String capitalize(String text) => text[0].toUpperCase() + text.substring(1);
+  static String capitalize(String text) =>
+      text[0].toUpperCase() + text.substring(1);
 
   /// OBJECTS
 
-  String date(DateTime date) => '${date.day}-${date.month}-${date.year}';
+  static String date(DateTime date) => '${date.day}-${date.month}-${date.year}';
 
-  String dateVerbose(DateTime date) {
+  static String dateVerbose(DateTime date) {
     final today = DateTime.now();
 
     final day = date.day;
@@ -41,13 +42,13 @@ class Printer {
     return '$weekDay $day $monthVerbose $year';
   }
 
-  String time(TimeOfDay time) {
+  static String time(TimeOfDay time) {
     String hour = time.hour.toString().padLeft(2, '0');
     String minute = time.minute.toString().padLeft(2, '0');
 
     return '$hour:$minute';
   }
 
-  String dateTime(DateTime dateTime) =>
+  static String dateTime(DateTime dateTime) =>
       date(dateTime) + ' ' + time(TimeOfDay.fromDateTime(dateTime));
 }

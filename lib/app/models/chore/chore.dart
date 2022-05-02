@@ -13,7 +13,8 @@ class Chore extends SerializableModel {
   @JsonKey(required: true)
   final List<String> mateIds;
 
-  Chore({required this.title, this.description, required this.mateIds}) : super.init();
+  Chore({required this.title, this.description, required this.mateIds})
+      : super.init();
 
   Chore._(
     String id,

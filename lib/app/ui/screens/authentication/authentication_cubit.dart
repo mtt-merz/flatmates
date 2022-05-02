@@ -18,29 +18,33 @@ class Authenticated extends AuthenticationCubitState {}
 
 class AuthenticationCubit extends Cubit<AuthenticationCubitState> {
   final _authentication = Locator.get<AuthenticationService>();
-  final _userRepository = Locator.get<UserRepository>();
 
   AuthenticationCubit() : super(Loading()) {
-    // _authentication.deleteAccount().then((value) {
-    _userRepository.stream
-        .listen((user) => emit(user != null ? Authenticated() : NotAuthenticated()));
+    UserRepository.i.stream.listen((userId) =>
+        emit(userId == null ? NotAuthenticated() : Authenticated()));
 
     final userId = _authentication.currentUser;
     if (userId != null)
-      _userRepository.fetch(userId);
+      sign(userId);
     else
       emit(NotAuthenticated());
-    // });
   }
 
   void signInAnonymously() async {
     emit(NotAuthenticated(isLoading: true));
 
     final userId = await _authentication.signAnonymously();
-    await _userRepository.fetch(userId).onError((error, stackTrace) {
+    await UserRepository.i.fetch(userId).onError((error, stackTrace) {
       final user = User(userId, isAnonymous: true);
-      return _userRepository.insert(user);
+      return UserRepository.i.insert(user);
     });
+
+    emit(Authenticated());
+  }
+
+  void sign(String userId) async {
+    emit(Loading());
+    await UserRepository.i.fetch(userId);
 
     emit(Authenticated());
   }

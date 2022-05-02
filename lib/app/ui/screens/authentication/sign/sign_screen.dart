@@ -10,22 +10,22 @@ part '_sign_in_page.dart';
 part '_sign_up_page.dart';
 
 class SignScreen extends StatefulWidget {
-  final int initialPage;
-  final bool canChangePage;
+  final int _initialPage;
+  final bool _canChangePage;
 
   const SignScreen.signUp({Key? key})
-      : initialPage = 1,
-        canChangePage = true,
+      : _initialPage = 1,
+        _canChangePage = true,
         super(key: key);
 
   const SignScreen.signIn({Key? key})
-      : initialPage = 0,
-        canChangePage = true,
+      : _initialPage = 0,
+        _canChangePage = true,
         super(key: key);
 
   const SignScreen.check({Key? key})
-      : initialPage = 0,
-        canChangePage = false,
+      : _initialPage = 0,
+        _canChangePage = false,
         super(key: key);
 
   @override
@@ -38,7 +38,7 @@ class _SignScreenState extends State<SignScreen> {
   @override
   initState() {
     super.initState();
-    controller = PageController(initialPage: widget.initialPage);
+    controller = PageController(initialPage: widget._initialPage);
   }
 
   @override
@@ -52,8 +52,12 @@ class _SignScreenState extends State<SignScreen> {
         controller: controller,
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          _SignInPage(goToSignUpScreen: widget.canChangePage ? () => goToPage(1) : null),
-          _SignUpPage(goToSignInScreen: widget.canChangePage ? () => goToPage(0) : null),
+          _SignInPage(
+              goToSignUpScreen:
+                  widget._canChangePage ? () => goToPage(1) : null),
+          _SignUpPage(
+              goToSignInScreen:
+                  widget._canChangePage ? () => goToPage(0) : null),
         ],
       );
 

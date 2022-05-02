@@ -1,38 +1,57 @@
 import 'package:flatmates/app/models/expense/expense.dart';
+import 'package:flatmates/app/models/flat/mate/mate.dart';
 import 'package:flatmates/app/repositories/expense_repository.dart';
-import 'package:flatmates/locator.dart';
-import 'package:flutter/material.dart';
+import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ExpenseCubit extends Cubit<AsyncSnapshot<List<Expense>>> {
-  final _expenseRepository = Locator.get<ExpenseRepository>();
+abstract class ExpensesCubitState {}
 
-  ExpenseCubit() : super(const AsyncSnapshot.waiting()) {
-    _expenseRepository.stream.listen(
-      (expenses) => emit(AsyncSnapshot.withData(ConnectionState.active, expenses)),
+class Loading extends ExpensesCubitState {}
+
+class Loaded extends ExpensesCubitState {
+  final List<Expense> expenses;
+
+  Loaded(this.expenses);
+
+  List<List<Expense>> get expensesDiary =>
+      (expenses..sort((a, b) => a.timestamp.isAfter(b.timestamp) ? 0 : 1))
+          .fold<List<List<Expense>>>([], (diary, expense) {
+        for (List<Expense> dailyExpenses in diary)
+          if (dailyExpenses
+              .any((e) => e.timestamp.day == expense.timestamp.day)) {
+            dailyExpenses.add(expense);
+            return diary;
+          }
+
+        diary.add([expense]);
+        return diary;
+      });
+
+  double getMateBalance(String userId) =>
+      expenses.fold(0.0, (previousValue, expense) {
+        var value = previousValue;
+
+        if (expense.issuerId == userId) value += expense.amount;
+        if (expense.addresseeIds.contains(userId))
+          value -= expense.amount / expense.addresseeIds.length;
+
+        return value;
+      });
+}
+
+class ExpensesCubit extends Cubit<ExpensesCubitState> {
+  ExpensesCubit() : super(Loading()) {
+    ExpenseRepository.i.stream.listen(
+      (expenses) => emit(Loaded(expenses)),
     );
   }
 
-  void insert(Expense expense) {
-    if (expense.description?.isEmpty ?? false) expense.description = null;
-    _expenseRepository.insert(expense);
+  String getMateNicknameFromId(String userId) {
+    final mate = FlatRepository.i.loggedMate(userId)!;
+    return mate.nickname;
   }
 
-// @override
-// Stream<List<List<Expense>>> get expensesDiaryStream =>
-//     ExpenseRepository.instance.stream.transform(
-//       StreamTransformer.fromHandlers(
-//           handleData: (expenses, sink) => sink.add(
-//                 expenses.fold<List<List<Expense>>>([], (diary, expense) {
-//                   for (List<Expense> dailyExpenses in diary)
-//                     if (dailyExpenses.any((e) => e.createdAt.day == expense.createdAt.day)) {
-//                       dailyExpenses.add(expense);
-//                       return diary;
-//                     }
-//
-//                   diary.add([expense]);
-//                   return diary;
-//                 }),
-//               )),
-//     );
+  Future<void> refresh() => ExpenseRepository.i.reload();
+
+  List<Mate> get mates => FlatRepository.i.value!.mates;
 }

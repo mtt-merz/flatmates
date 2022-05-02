@@ -1,16 +1,13 @@
-import 'package:flatmates/app/models/flat/flat.dart';
-import 'package:flatmates/app/ui/screens/flat/flat_common_space_widget.dart';
-import 'package:flatmates/app/ui/screens/flat/flat_common_spaces_setter_dialog.dart';
 import 'package:flatmates/app/ui/utils/color_utils.dart';
 import 'package:flatmates/app/ui/widget/field_container.dart';
 import 'package:flatmates/app/ui/widget/mate_chip.dart';
 import 'package:flatmates/app/ui/widget/screen_template.dart';
+import 'package:flatmates/app/ui/widget/submit_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'flat_editor_cubit.dart';
-
-import 'package:flutter/services.dart';
 
 class FlatEditorScreen extends StatefulWidget {
   const FlatEditorScreen({Key? key}) : super(key: key);
@@ -38,13 +35,16 @@ class _FlatEditorScreenState extends State<FlatEditorScreen> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
-      builder: (context, Flat? flat) {
-        if (flat == null)
-          return const Center(child: CircularProgressIndicator());
+      builder: (context, state) {
+        final flat = (state as Editing).flat;
 
         return ScreenTemplate(
           title: 'Edit flat',
           subtitle: 'Here you can set the info related to your flat',
+          footer: SubmitButton(
+            onPressed: () {},
+            child: const Text('SAVE'),
+          ),
           children: [
             // Name
             FieldContainer(
@@ -105,26 +105,45 @@ class _FlatEditorScreenState extends State<FlatEditorScreen> {
                       ],
               ),
             ),
-
-            // Add common spaces button
-            Padding(
-              padding: Theme.of(context).cardTheme.margin!,
-              child: OutlinedButton(
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.add),
-                      SizedBox(width: 10),
-                      Text('Add common spaces'),
-                    ]),
-                onPressed: () => showDialog<List<CommonSpace>?>(
-                    context: context,
-                    builder: (context) =>
-                        SetCommonSpacesDialog(flat.commonSpaces)).then(
-                    (commonSpaces) => cubit.setCommonSpaces(commonSpaces)),
-              ),
-            )
           ],
         );
       });
+}
+
+class CommonSpaceWidget extends StatelessWidget {
+  final String title;
+  final Color backgroundColor;
+  final ImageProvider? image;
+
+  const CommonSpaceWidget({
+    Key? key,
+    required this.title,
+    required this.backgroundColor,
+    this.image,
+  }) : super(key: key);
+
+  Color get contentColor => ColorUtils(backgroundColor).textColor;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          border: Border.all(width: 2, color: backgroundColor),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Card(
+          margin: EdgeInsets.zero,
+          color: backgroundColor,
+          child: ListTile(
+            leading: image != null
+                ? SizedBox(width: MediaQuery.of(context).size.width * .25)
+                : null,
+            title: Text(title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(color: contentColor)),
+          ),
+        ),
+      );
 }

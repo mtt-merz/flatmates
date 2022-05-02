@@ -1,5 +1,5 @@
 import 'package:flatmates/app/ui/screens/settings/account/account_settings_panel.dart';
-import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flatmates/app/ui/widget/card_emphasis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,12 +15,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final cubit = ProfileCubit();
-
-  @override
-  void dispose() {
-    super.dispose();
-    cubit.close();
-  }
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
@@ -70,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               SliverPadding(
-                padding: SizeUtils.of(context).horizontalPadding,
+                padding: SizeUtils.of(context).basePadding,
                 sliver: SliverList(
                   delegate: SliverChildListDelegate.fixed([
                     if (cubit.userIsAnonymous)

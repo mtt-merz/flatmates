@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flutter/material.dart';
 
 class ScreenTemplate extends StatefulWidget {
@@ -53,41 +53,47 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
                     snap: true,
                     floating: true,
                     elevation: 2,
-                    // onStretchTrigger: () => subtitle = null,
                     flexibleSpace: FlexibleSpaceBar(
-                      title: Text(widget.title, style: Theme.of(context).textTheme.headline6),
+                      title: Text(widget.title,
+                          style: Theme.of(context).textTheme.headline6),
                       titlePadding: EdgeInsetsDirectional.only(
-                          start: SizeUtils.of(context).horizontalPadding.horizontal / 2,
+                          start:
+                              SizeUtils.of(context).basePadding.horizontal / 2,
                           bottom: 16.0),
                     ),
-                    actions: [IconButton(icon: const Icon(Icons.close), onPressed: pop)],
+                    actions: [
+                      IconButton(icon: const Icon(Icons.close), onPressed: pop)
+                    ],
                   ),
 
                   // Body
                   SliverPadding(
-                    padding: SizeUtils.of(context).horizontalPadding,
+                    padding: SizeUtils.of(context).basePadding,
                     sliver: SliverList(
                         delegate: SliverChildListDelegate.fixed([
                       // Container(height: SizeUtils.of(context).getScaledHeight(10)),
                       // Text(widget.title,
                       //     textAlign: TextAlign.start, style: Theme.of(context).textTheme.headline4),
                       // SizedBox(height: SizeUtils.of(context).getScaledHeight(1)),
-                      widget.subtitle != null ? Text(widget.subtitle!) : const SizedBox(),
-                      SizedBox(height: SizeUtils.of(context).getScaledHeight(4)),
+                      widget.subtitle != null
+                          ? Text(widget.subtitle!)
+                          : const SizedBox(),
+                      SizedBox(
+                          height: SizeUtils.of(context).getScaledHeight(4)),
                       ...widget.children,
                     ])),
                   ),
                 ],
               ),
             ),
-
-            // Footer
-            Padding(
-              padding: SizeUtils.of(context).basePadding,
-              child: widget.footer,
-            ),
           ],
         ),
+        bottomNavigationBar: widget.footer == null
+            ? null
+            : Padding(
+                padding: SizeUtils.of(context).basePadding,
+                child: widget.footer,
+              ),
         floatingActionButton: widget.floatingActionButton,
       ),
     );
@@ -96,7 +102,8 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
 
 class NoOverscrollBehavior extends ScrollBehavior {
   @override
-  Widget buildOverscrollIndicator(BuildContext context, Widget child, ScrollableDetails details) {
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
     return child;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flatmates/app/ui/screens/expenses/add_expense/add_expense_dialog.dart';
 import 'package:flatmates/app/ui/screens/home/home_cubit.dart';
-import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

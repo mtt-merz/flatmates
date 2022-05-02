@@ -1,4 +1,4 @@
-import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flatmates/app/ui/widget/submit_button.dart';
 import 'package:flutter/material.dart';
 
@@ -24,12 +24,11 @@ class FormDialog extends StatelessWidget {
               const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             children: [
+              //Header
               Padding(
-                padding: SizeUtils.of(context).horizontalPadding.add(
-                    EdgeInsets.only(
-                        top: SizeUtils.of(context).horizontalPaddingValue,
-                        bottom:
-                            SizeUtils.of(context).horizontalPaddingValue / 2)),
+                padding: SizeUtils.of(context).basePadding.add(EdgeInsets.only(
+                    top: SizeUtils.of(context).horizontalPaddingValue,
+                    bottom: SizeUtils.of(context).horizontalPaddingValue / 2)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,7 +38,8 @@ class FormDialog extends StatelessWidget {
                   ],
                 ),
               ),
-              // const Divider(),
+
+              // Content
               Expanded(
                 child: ListView(
                   padding: SizeUtils.of(context).basePadding,
@@ -47,23 +47,22 @@ class FormDialog extends StatelessWidget {
                   children: children,
                 ),
               ),
+
+              // Action buttons
               Padding(
-                  padding: SizeUtils.of(context).horizontalPadding.add(
-                      EdgeInsets.symmetric(
-                          vertical:
-                              SizeUtils.of(context).verticalPaddingValue / 2)),
+                  padding: SizeUtils.of(context).basePadding,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Flexible(
-                          flex: 3,
+                          flex: 2,
                           child: TextButton(
                             onPressed: onCancel,
                             child: const Text('CANCEL'),
                           )),
                       const SizedBox(width: 5),
                       Flexible(
-                        flex: 2,
+                        flex: 1,
                         child: SubmitButton(
                           child: const Text('SAVE'),
                           onPressed: onSubmit,

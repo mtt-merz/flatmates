@@ -43,9 +43,13 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             // Expense amount
             FieldContainer(
               label: 'amount',
+              isMandatory: true,
               child: TextFormField(
                 autofocus: true,
-                style: Theme.of(context).textTheme.headline2,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2!
+                    .copyWith(color: Colors.black87),
                 inputFormatters: [_ExpenseTextFormatter()],
                 decoration:
                     const InputDecoration(hintText: '0', suffix: Text(' €')),
@@ -71,6 +75,7 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             // Expense addresses
             FieldContainer(
               label: 'ADDRESSES',
+              isMandatory: true,
               child: Wrap(
                 spacing: 8,
                 children: cubit.mates

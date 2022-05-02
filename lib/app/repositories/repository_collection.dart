@@ -32,7 +32,9 @@ abstract class RepositoryCollection<T extends SerializableModel>
     addEvent(objects);
   }
 
-  late final List<T> objects;
+  Future<void> reload() => load(key);
+
+  late List<T> objects;
 
   Future<void> insert(T object) async {
     addEvent(objects..add(object));

@@ -8,39 +8,39 @@ abstract class SettingsCubitState {}
 
 class Ready extends SettingsCubitState {}
 
+class RequireRecentLogin extends SettingsCubitState {}
+
 class SettingsCubit extends Cubit<SettingsCubitState> {
   SettingsCubit() : super(Ready());
 
-  User get _user => UserRepository.i.value!;
+  final _user = UserRepository.i.value!;
 
-  void signOut() async {
-    if (_user.isAnonymous) {
-      UserRepository.i.remove();
-      FlatRepository.i.removeMate(_user.id);
-    }
+  AuthenticationService get _authenticationService =>
+      Locator.get<AuthenticationService>();
 
-    try {
-      await Locator.get<AuthenticationService>().signOut();
-    } on AuthenticationError catch (_) {}
+  void signOut() {
+    if (_user.isAnonymous) return deleteAccount();
+    _catchAuthenticationError(() => _authenticationService.signOut());
   }
 
   void leaveFlat() {
-    UserRepository.i.update(_user..flatIds.remove(_user.currentFlatId));
+    UserRepository.i.leaveCurrentFlat();
     FlatRepository.i.removeMate(_user.id);
   }
 
-  void deleteAccount(
-      {required Future<bool> Function() onRequiresRecentLogin}) async {
-    try {
-      await Locator.get<AuthenticationService>().deleteAccount();
+  void deleteAccount() => _catchAuthenticationError(() async {
+        await _authenticationService.deleteAccount();
+        await UserRepository.i.remove();
+      });
 
-      UserRepository.i.remove();
-      FlatRepository.i.removeMate(_user.id);
+  Future<void> _catchAuthenticationError(Future<void> Function() code) async {
+    try {
+      await code();
     } on AuthenticationError catch (error) {
-      if (error.code == 'requires-recent-login')
-        onRequiresRecentLogin().then((value) => value
-            ? deleteAccount(onRequiresRecentLogin: onRequiresRecentLogin)
-            : null);
+      switch (error.code) {
+        case 'requires-recent-login':
+          emit(RequireRecentLogin());
+      }
     }
   }
 }

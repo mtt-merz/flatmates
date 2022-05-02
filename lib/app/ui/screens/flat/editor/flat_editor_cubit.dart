@@ -1,23 +1,28 @@
 import 'package:flatmates/app/repositories/flat_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FlatEditorCubit extends Cubit<Flat?> {
-  late Flat flat;
+abstract class FlatEditorCubitState {}
 
-  FlatEditorCubit() : super(null) {
-    flat = FlatRepository.i.value;
-    emit(flat);
-  }
+class Editing extends FlatEditorCubitState {
+  final Flat flat;
 
-  void setName(String name) {
-    if (name.isEmpty) return;
-    emit(flat..name = name);
-  }
+  final bool isLoading;
+  final bool hasError;
 
-  void setCommonSpaces(List<CommonSpace>? commonSpaces) {
-    if (commonSpaces == null) return;
-    emit(flat..commonSpaces = commonSpaces);
-  }
+  Editing(this.flat, {this.isLoading = false, this.hasError = false});
+}
+
+class FlatEditorCubit extends Cubit<FlatEditorCubitState> {
+  FlatEditorCubit() : super(Editing(_flat));
+
+  static final _flat = FlatRepository.i.value!;
+
+  void setName(String name) => emit(Editing(_flat..name = name));
+
+  void toggleCommonSpace(CommonSpace commonSpace) => emit(Editing(_flat
+    ..commonSpaces
+        .firstWhere((element) => commonSpace.name == element.name)
+        .enabled = commonSpace.enabled));
 
   void save() {}
 }

@@ -9,18 +9,12 @@ abstract class ProfileCubitState {}
 class Ready extends ProfileCubitState {}
 
 class ProfileCubit extends Cubit<ProfileCubitState> {
-  ProfileCubit()
-      : _flat = FlatRepository.i.value,
-        super(Ready()) {
-    FlatRepository.i.stream.listen((flat) {
-      _flat = flat;
-      emit(Ready());
-    });
+  ProfileCubit() : super(Ready()) {
+    FlatRepository.i.stream.listen((flat) => emit(Ready()));
   }
 
-  Mate get _mate => FlatRepository.i.loggedMate(_user.id)!;
-  final _user = UserRepository.i.value!;
-  late Flat _flat;
+  final User _user = UserRepository.i.value!;
+  late final Mate _mate = FlatRepository.i.loggedMate(_user.id)!;
 
   Color get mateColor => Color(_mate.colorValue);
 

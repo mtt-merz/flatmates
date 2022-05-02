@@ -22,10 +22,10 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
   static final _expense = Expense(
     amount: 0,
     issuerId: UserRepository.i.value!.id,
-    addresseeIds: FlatRepository.i.value.mates.map((e) => e.userId).toList(),
+    addresseeIds: FlatRepository.i.value!.mates.map((e) => e.userId).toList(),
   );
 
-  List<Mate> get mates => [...FlatRepository.i.value.mates];
+  List<Mate> get mates => [...FlatRepository.i.value!.mates];
 
   void setAmount(String amount) =>
       emit(Editing(_expense..amount = double.tryParse(amount) ?? 0.0));

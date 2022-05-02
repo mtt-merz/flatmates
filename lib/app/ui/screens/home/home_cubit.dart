@@ -8,5 +8,5 @@ class Ready extends HomeCubitState {}
 class HomeCubit extends Cubit<HomeCubitState> {
   HomeCubit() : super(Ready());
 
-  String? get flatName => FlatRepository.i.value.name;
+  String? get flatName => FlatRepository.i.value!.name;
 }

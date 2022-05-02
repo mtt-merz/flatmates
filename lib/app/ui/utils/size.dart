@@ -15,10 +15,7 @@ class SizeUtils {
 
   double get horizontalPaddingValue => getScaledWidth(5);
 
-  double get verticalPaddingValue => getScaledHeight(2);
-
-  EdgeInsets get horizontalPadding =>
-      EdgeInsets.symmetric(horizontal: horizontalPaddingValue);
+  double get verticalPaddingValue => 12.0;
 
   EdgeInsetsGeometry get basePadding => EdgeInsets.symmetric(
       horizontal: horizontalPaddingValue, vertical: verticalPaddingValue);

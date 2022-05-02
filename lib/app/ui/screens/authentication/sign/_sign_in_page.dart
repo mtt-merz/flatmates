@@ -3,7 +3,8 @@ part of 'sign_screen.dart';
 class _SignInPage extends StatefulWidget {
   final VoidCallback? goToSignUpScreen;
 
-  const _SignInPage({Key? key, required this.goToSignUpScreen}) : super(key: key);
+  const _SignInPage({Key? key, required this.goToSignUpScreen})
+      : super(key: key);
 
   @override
   State<_SignInPage> createState() => _SignInPageState();
@@ -14,6 +15,8 @@ class _SignInPageState extends State<_SignInPage> {
 
   final TextEditingController mailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
+  bool hidePassword = true;
 
   @override
   void dispose() {
@@ -32,7 +35,7 @@ class _SignInPageState extends State<_SignInPage> {
         return ScreenTemplate(
           title: 'Login',
           subtitle: 'Enter your account',
-          onPop: () => Navigator.of(context).pop(false),
+          onPop: Navigator.of(context).pop,
           children: [
             // Email
             FieldContainer(
@@ -52,7 +55,18 @@ class _SignInPageState extends State<_SignInPage> {
                 controller: passwordController,
                 onChanged: (_) => setState(() {}),
                 keyboardType: TextInputType.visiblePassword,
-                textInputAction: TextInputAction.next,
+                textInputAction: TextInputAction.done,
+                obscureText: hidePassword,
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    icon: Icon(hidePassword
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
+                    onPressed: () =>
+                        setState(() => hidePassword = !hidePassword),
+                  ),
+                ),
+                onSubmitted: (_) => submit(),
               ),
             ),
 
@@ -76,7 +90,8 @@ class _SignInPageState extends State<_SignInPage> {
       });
 
   void submit() => cubit.loginWithEmailAndPassword(
-      email: mailController.value.text,
-      password: passwordController.value.text,
-      onSucceed: () => Navigator.of(context).pop(true));
+        email: mailController.value.text,
+        password: passwordController.value.text,
+        onSucceed: (userId) => Navigator.of(context).pop(userId),
+      );
 }

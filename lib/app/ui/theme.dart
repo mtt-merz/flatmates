@@ -51,7 +51,7 @@ class CustomThemeData {
   get _card => CardTheme(
         color: Colors.white,
         elevation: 0.0,
-        margin: const EdgeInsets.only(top: 12.0),
+        margin: const EdgeInsets.only(bottom: 12.0),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(_cardRadius))),
       );
@@ -111,6 +111,7 @@ class CustomThemeData {
       focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black54, width: 1.2)),
       focusColor: Colors.black54,
+      iconColor: Colors.black54,
       floatingLabelBehavior: FloatingLabelBehavior.never,
       contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     );

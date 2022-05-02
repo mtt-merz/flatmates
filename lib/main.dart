@@ -8,7 +8,6 @@ import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
-import 'package:uuid/uuid.dart';
 
 void main() async {
   // Logger.root.level = Level.ALL;
@@ -19,9 +18,6 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-
-  String id = Uuid(options: {}).v1();
-  print(id);
 
   Locator.init();
   SystemChrome.setPreferredOrientations(

@@ -1,7 +1,7 @@
 import 'package:flatmates/app/ui/screens/authentication/authentication_cubit.dart';
 import 'package:flatmates/app/ui/screens/init/init_screen.dart';
 import 'package:flatmates/app/ui/screens/splash_screen.dart';
-import 'package:flatmates/app/ui/utils/size_utils.dart';
+import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flatmates/app/ui/widget/submit_button.dart';
 import 'package:flatmates/locator.dart';
 import 'package:flutter/material.dart';
@@ -55,12 +55,16 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       child: const Text('Login'),
                       onPressed: () => Navigator.of(context)
                           .pushNamed('/authentication/sign_in')
-                          .then((value) => ScaffoldMessenger.of(context)
-                              .showSnackBar(const SnackBar(content: Text('You\'re logged in')))),
+                          .then((userId) => userId == null
+                              ? null
+                              : onSuccessSigning(userId as String)),
                     ),
                   ])
                 ],
               )),
         );
       });
+
+  void onSuccessSigning(String userId) => ScaffoldMessenger.of(context)
+      .showSnackBar(const SnackBar(content: Text('You\'re logged in')));
 }
