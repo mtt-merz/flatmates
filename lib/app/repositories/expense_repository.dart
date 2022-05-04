@@ -11,7 +11,6 @@ class ExpenseRepository extends RepositoryCollection<Expense> {
 
   @override
   void fetch() => FlatRepository.i.breakingStream.listen((flat) {
-        print('EXPENSE REPOSITORY FETCH TRIGGER: $flat');
         if (flat == null) return;
         key = 'flats/${flat.id}/expenses';
         load(key);

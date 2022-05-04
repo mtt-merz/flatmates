@@ -1,11 +1,14 @@
 import 'package:flatmates/app/models/expense/expense.dart';
-import 'package:flatmates/app/ui/screens/expenses/expenses_cubit.dart';
 import 'package:flatmates/app/ui/utils/printer.dart';
 import 'package:flatmates/app/ui/utils/size.dart';
 import 'package:flatmates/app/ui/widget/field_container.dart';
 import 'package:flatmates/app/ui/widget/page_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'expense_tile.dart';
+import 'expenses_cubit.dart';
+import 'set_expense/set_expense_dialog.dart';
 
 class ExpensesPage extends StatefulWidget {
   const ExpensesPage({Key? key}) : super(key: key);
@@ -64,46 +67,26 @@ class _ExpensesPageState extends State<ExpensesPage> {
                         .map((dailyExpenses) => FieldContainer(
                               label: Printer.dateVerbose(
                                   dailyExpenses.first.timestamp),
-                              child: Card(
-                                child: Column(
-                                    children: dailyExpenses
-                                        .map((expense) => ExpenseTile(expense,
-                                            getMateNicknameFromId:
-                                                cubit.getMateNicknameFromId))
-                                        .toList()),
-                              ),
+                              child: buildDailyExpensesWidget(dailyExpenses),
                             ))
                         .toList())
           ],
         );
       });
-}
 
-class ExpenseTile extends StatelessWidget {
-  final Expense expense;
-  final String Function(String) getMateNicknameFromId;
-
-  const ExpenseTile(this.expense,
-      {Key? key, required this.getMateNicknameFromId})
-      : super(key: key);
-
-  String get issuer => getMateNicknameFromId(expense.issuerId);
-
-  String get addresses {
-    final addresseeNames = expense.addresseeIds
-        .map((addresseeId) => getMateNicknameFromId(addresseeId));
-
-    return addresseeNames.join(', ');
-  }
-
-  @override
-  Widget build(BuildContext context) => ListTile(
-        title: Text(expense.description ?? 'New expense'),
-        subtitle: Text('$issuer - $addresses'),
-        trailing: Text('€ ${expense.amount}',
-            style: Theme.of(context).textTheme.bodyText1),
-        visualDensity: VisualDensity.compact,
-        onTap: () =>
-            showDialog(context: context, builder: (context) => const Dialog()),
+  Widget buildDailyExpensesWidget(List<Expense> dailyExpenses) => Card(
+        child: ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          separatorBuilder: (context, _) => const Divider(),
+          itemCount: dailyExpenses.length,
+          itemBuilder: (context, index) => ExpenseTile(
+            dailyExpenses[index],
+            getMateFromId: cubit.getMateFromId,
+            remove: () => cubit.remove(dailyExpenses[index]),
+            edit: () => showSetExpenseDialog(context,
+                expense: dailyExpenses[index], onSuccess: cubit.edit),
+          ),
+        ),
       );
 }

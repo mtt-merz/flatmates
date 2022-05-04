@@ -46,12 +46,13 @@ class ExpensesCubit extends Cubit<ExpensesCubitState> {
     );
   }
 
-  String getMateNicknameFromId(String userId) {
-    final mate = FlatRepository.i.loggedMate(userId)!;
-    return mate.nickname;
-  }
+  List<Mate> get mates => FlatRepository.i.value!.mates;
+
+  Mate getMateFromId(String userId) => FlatRepository.i.loggedMate(userId)!;
 
   Future<void> refresh() => ExpenseRepository.i.reload();
 
-  List<Mate> get mates => FlatRepository.i.value!.mates;
+  void remove(Expense expense) => ExpenseRepository.i.remove(expense);
+
+  void edit(Expense expense) => ExpenseRepository.i.update(expense);
 }

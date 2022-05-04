@@ -11,7 +11,6 @@ class ChoreRepository extends RepositoryCollection<Chore> {
 
   @override
   void fetch() => FlatRepository.i.breakingStream.listen((flat) {
-        print('CHORE REPOSITORY FETCH TRIGGER: $flat');
         if (flat == null) return;
         key = 'flats/${flat.id}/chores';
         load(key);

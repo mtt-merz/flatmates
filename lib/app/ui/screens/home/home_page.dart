@@ -5,7 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final void Function() goToExpenses;
+  final void Function() goToChores;
+
+  const HomePage(
+      {Key? key, required this.goToExpenses, required this.goToChores})
+      : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -36,20 +41,17 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           body: ListView(
+            reverse: true,
             padding: SizeUtils.of(context).basePadding,
             children: [
               Card(
                 child: ListTile(
                   title: const Text('Expenses'),
                   trailing: IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () => showDialog(
-                        barrierDismissible: false,
-                        useSafeArea: true,
-                        context: context,
-                        builder: (context) => const AddExpenseDialog()),
-                  ),
-                  onTap: () => Navigator.of(context).pushNamed('/expenses'),
+                      icon: const Icon(Icons.add),
+                      onPressed: () => showSetExpenseDialog(context,
+                          onSuccess: cubit.addExpense)),
+                  onTap: widget.goToExpenses,
                 ),
               ),
             ],

@@ -1,3 +1,4 @@
+import 'package:flatmates/app/models/expense/expense.dart';
 import 'package:flatmates/app/ui/widget/field_container.dart';
 import 'package:flatmates/app/ui/widget/form_dialog.dart';
 import 'package:flatmates/app/ui/widget/mate_chip.dart';
@@ -7,15 +8,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'set_expense_cubit.dart';
 
-class AddExpenseDialog extends StatefulWidget {
-  const AddExpenseDialog({Key? key}) : super(key: key);
+void showSetExpenseDialog(context,
+        {Expense? expense, required void Function(Expense) onSuccess}) =>
+    showDialog(
+      barrierDismissible: false,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => SetExpenseDialog(expense),
+    ).then((result) => result == null ? null : onSuccess(result as Expense));
+
+class SetExpenseDialog extends StatefulWidget {
+  final Expense? expense;
+
+  const SetExpenseDialog(this.expense, {Key? key}) : super(key: key);
 
   @override
-  _AddExpenseDialogState createState() => _AddExpenseDialogState();
+  _SetExpenseDialogState createState() => _SetExpenseDialogState();
 }
 
-class _AddExpenseDialogState extends State<AddExpenseDialog> {
-  final cubit = AddExpenseCubit();
+class _SetExpenseDialogState extends State<SetExpenseDialog> {
+  late final cubit = SetExpenseCubit(widget.expense);
+
+  late final amountController =
+      TextEditingController(text: widget.expense?.amount.toString());
+  late final descriptionController =
+      TextEditingController(text: widget.expense?.description);
 
   @override
   void dispose() {
@@ -25,19 +42,12 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
 
   @override
   Widget build(BuildContext context) => BlocBuilder(
-      bloc: cubit,
-      builder: (context, state) {
-        if (state is! Editing)
-          return const Center(child: CircularProgressIndicator());
-
-        return FormDialog(
-          title: 'Add expense',
+        bloc: cubit,
+        builder: (context, SetExpenseState state) => FormDialog(
+          title: widget.expense == null ? 'Add expense' : 'Expense',
           onCancel: Navigator.of(context).pop,
           onSubmit: cubit.canSubmit
-              ? () {
-                  cubit.submit();
-                  Navigator.of(context).pop();
-                }
+              ? () => Navigator.of(context).pop(state.expense)
               : null,
           children: [
             // Expense amount
@@ -45,7 +55,8 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
               label: 'amount',
               isMandatory: true,
               child: TextFormField(
-                autofocus: true,
+                controller: amountController,
+                autofocus: widget.expense == null,
                 style: Theme.of(context)
                     .textTheme
                     .headline2!
@@ -64,6 +75,7 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
             FieldContainer(
               label: 'description',
               child: TextField(
+                controller: descriptionController,
                 style: Theme.of(context).textTheme.subtitle1,
                 decoration: const InputDecoration(
                     label: Text('What is this expense for?')),
@@ -87,8 +99,8 @@ class _AddExpenseDialogState extends State<AddExpenseDialog> {
               ),
             ),
           ],
-        );
-      });
+        ),
+      );
 }
 
 class _ExpenseTextFormatter extends TextInputFormatter {

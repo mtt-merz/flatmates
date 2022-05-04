@@ -64,7 +64,7 @@ class CustomThemeData {
 
   /// Divider
   get _divider =>
-      const DividerThemeData(thickness: 1, color: Colors.black26, space: 1);
+      DividerThemeData(thickness: 1, color: _scaffoldBackground, space: 1);
 
   /// OutlinedButton
   get _outlinedButton => OutlinedButtonThemeData(

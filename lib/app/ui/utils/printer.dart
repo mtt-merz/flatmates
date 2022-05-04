@@ -42,6 +42,9 @@ class Printer {
     return '$weekDay $day $monthVerbose $year';
   }
 
+  static String timeFromDate(DateTime date) =>
+      time(TimeOfDay(hour: date.hour, minute: date.minute));
+
   static String time(TimeOfDay time) {
     String hour = time.hour.toString().padLeft(2, '0');
     String minute = time.minute.toString().padLeft(2, '0');

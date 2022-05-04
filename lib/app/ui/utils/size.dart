@@ -15,10 +15,16 @@ class SizeUtils {
 
   double get horizontalPaddingValue => getScaledWidth(5);
 
-  double get verticalPaddingValue => 12.0;
+  double get verticalPaddingValue => 14.0;
 
   EdgeInsetsGeometry get basePadding => EdgeInsets.symmetric(
       horizontal: horizontalPaddingValue, vertical: verticalPaddingValue);
+
+  EdgeInsetsGeometry get listPadding => EdgeInsets.only(
+        left: horizontalPaddingValue,
+        right: horizontalPaddingValue,
+        top: verticalPaddingValue,
+      );
 
   EdgeInsetsGeometry get screenPadding =>
       basePadding.add(EdgeInsets.only(top: getScaledHeight(5)));

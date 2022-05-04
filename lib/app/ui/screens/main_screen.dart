@@ -38,21 +38,19 @@ class _MainScreenState extends State<MainScreen> {
           controller: pageController,
           physics: const NeverScrollableScrollPhysics(),
           onPageChanged: (page) => setState(() => this.page = page),
-          children: const [
-            HomePage(),
-            ExpensesPage(),
-            ChoresPage(),
-            ProfileScreen()
+          children: [
+            HomePage(
+              goToExpenses: () => jumpToPage(1),
+              goToChores: () => jumpToPage(2),
+            ),
+            const ExpensesPage(),
+            const ChoresPage(),
+            const ProfileScreen()
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: page,
-          onTap: (page) => setState(() {
-            try {
-              this.page = page;
-              pageController.jumpToPage(page);
-            } on Object catch (_) {}
-          }),
+          onTap: jumpToPage,
           items: [
             buildBottomNavigatorBarItem('Home',
                 icon: Icons.home_outlined, activeIcon: Icons.home),
@@ -67,6 +65,13 @@ class _MainScreenState extends State<MainScreen> {
           ],
         ),
       );
+
+  void jumpToPage(int page) => setState(() {
+        try {
+          this.page = page;
+          pageController.jumpToPage(page);
+        } on Object catch (_) {}
+      });
 
   BottomNavigationBarItem buildBottomNavigatorBarItem(String label,
           {required IconData icon, IconData? activeIcon}) =>
