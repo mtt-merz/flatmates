@@ -1,3 +1,5 @@
+import 'package:flatmates/app/models/flat/common_space/common_space.dart';
+import 'package:flatmates/app/ui/theme.dart';
 import 'package:flatmates/app/ui/utils/color_utils.dart';
 import 'package:flatmates/app/ui/widget/field_container.dart';
 import 'package:flatmates/app/ui/widget/mate_chip.dart';
@@ -17,7 +19,7 @@ class FlatEditorScreen extends StatefulWidget {
 }
 
 class _FlatEditorScreenState extends State<FlatEditorScreen> {
-  final cubit = FlatEditorCubit();
+  final cubit = SetFlatCubit();
   late final TextEditingController titleController;
 
   @override
@@ -35,16 +37,18 @@ class _FlatEditorScreenState extends State<FlatEditorScreen> {
   @override
   Widget build(BuildContext context) => BlocBuilder(
       bloc: cubit,
-      builder: (context, state) {
-        final flat = (state as Editing).flat;
-
+      builder: (context, SetFlatState state) {
+        final flat = state.flat;
         return ScreenTemplate(
-          title: 'Edit flat',
-          subtitle: 'Here you can set the info related to your flat',
-          footer: SubmitButton(
-            onPressed: () {},
-            child: const Text('SAVE'),
-          ),
+          title: 'Your flat',
+          subtitle: 'Here you can find and edit the info related to your flat.',
+          footer: state.hasChanges
+              ? SubmitButton(
+                  onPressed: () =>
+                      cubit.save().then((_) => Navigator.of(context).pop()),
+                  child: const Text('SAVE'),
+                )
+              : null,
           children: [
             // Name
             FieldContainer(
@@ -70,6 +74,7 @@ class _FlatEditorScreenState extends State<FlatEditorScreen> {
                       .toList()),
             ),
 
+            // Invitation code
             FieldContainer(
               label: 'invitation code',
               child: TextField(
@@ -93,17 +98,23 @@ class _FlatEditorScreenState extends State<FlatEditorScreen> {
             // Common spaces
             FieldContainer(
               label: 'common spaces',
-              child: Column(
-                children: flat.commonSpaces.isNotEmpty
-                    ? flat.commonSpaces
-                        .map((e) => CommonSpaceWidget(
-                            title: e.name, backgroundColor: e.color))
-                        .toList()
-                    : [
-                        const Card(
-                            child: Text('No common spaces specified yet'))
-                      ],
-              ),
+              child: flat.commonSpaces.isEmpty
+                  ? const Text('No common spaces specified yet')
+                  : GridView.count(
+                      padding: EdgeInsets.zero,
+                      crossAxisCount: 2,
+                      childAspectRatio: 21 / 9,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      children: flat.commonSpaces
+                          .map((commonSpace) => CommonSpaceWidget(
+                                commonSpace,
+                                onToggle: () =>
+                                    cubit.toggleCommonSpace(commonSpace),
+                              ))
+                          .toList()),
             ),
           ],
         );
@@ -111,39 +122,27 @@ class _FlatEditorScreenState extends State<FlatEditorScreen> {
 }
 
 class CommonSpaceWidget extends StatelessWidget {
-  final String title;
-  final Color backgroundColor;
-  final ImageProvider? image;
+  final CommonSpace commonSpace;
+  final VoidCallback onToggle;
 
-  const CommonSpaceWidget({
-    Key? key,
-    required this.title,
-    required this.backgroundColor,
-    this.image,
-  }) : super(key: key);
+  const CommonSpaceWidget(this.commonSpace, {Key? key, required this.onToggle})
+      : super(key: key);
 
-  Color get contentColor => ColorUtils(backgroundColor).textColor;
+  Color get contentColor => ColorUtils(commonSpace.color).textColor;
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-          border: Border.all(width: 2, color: backgroundColor),
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Card(
-          margin: EdgeInsets.zero,
-          color: backgroundColor,
-          child: ListTile(
-            leading: image != null
-                ? SizedBox(width: MediaQuery.of(context).size.width * .25)
-                : null,
-            title: Text(title,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6!
-                    .copyWith(color: contentColor)),
-          ),
+            color: commonSpace.color,
+            borderRadius: BorderRadius.all(
+                Radius.circular(CustomThemeData().fieldRadius))),
+        child: ListTile(
+          onTap: onToggle,
+          title: Text(commonSpace.name,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyText1!
+                  .copyWith(color: contentColor)),
         ),
       );
 }

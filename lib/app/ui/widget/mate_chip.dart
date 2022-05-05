@@ -1,7 +1,7 @@
 import 'package:flatmates/app/models/flat/mate/mate.dart';
-import 'package:flutter/material.dart';
-
+import 'package:flatmates/app/ui/theme.dart';
 import 'package:flatmates/app/ui/utils/color_utils.dart';
+import 'package:flutter/material.dart';
 
 class MateChip extends StatefulWidget {
   final Mate mate;
@@ -39,11 +39,11 @@ class _MateChipState extends State<MateChip> {
         child: Opacity(
           opacity: _isSelected ? 1 : .4,
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 6),
             padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 13),
             decoration: BoxDecoration(
               color: Color(widget.mate.colorValue),
-              borderRadius: const BorderRadius.all(Radius.circular(4)),
+              borderRadius: BorderRadius.all(
+                  Radius.circular(CustomThemeData().fieldRadius)),
             ),
             child: Text(widget.mate.name,
                 style: Theme.of(context).textTheme.bodyText1!.copyWith(

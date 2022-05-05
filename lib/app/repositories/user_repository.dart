@@ -17,22 +17,22 @@ class UserRepository with Repository<User?> {
     addBreakingEvent(User.fromJson(rawUser));
   }
 
-  Future<void> insert(User user) async {
-    await _persistence.insert(User.key, user);
+  Future<void> insert(User user) {
     addBreakingEvent(user);
+    return _persistence.insert(User.key, user);
   }
 
-  Future<void> update(User user) async {
-    await _persistence.update(User.key, user);
+  Future<void> update(User user) {
     addBreakingEvent(user);
+    return _persistence.update(User.key, user);
   }
 
   Future<void> updateFunctional(User Function(User) updater) =>
       update(updater(value!));
 
-  Future<void> remove() async {
-    await _persistence.remove(User.key, value!);
+  Future<void> remove() {
     addBreakingEvent(null);
+    return _persistence.remove(User.key, value!);
   }
 
   Future<void> leaveCurrentFlat() => updateFunctional((user) => user

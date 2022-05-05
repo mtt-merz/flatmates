@@ -23,12 +23,11 @@ final _defaultExpense = Expense(
 
 class SetExpenseCubit extends Cubit<SetExpenseState> {
   final Expense _expense;
+  late final _originalExpense = _expense.clone();
 
   SetExpenseCubit(Expense? expense)
       : _expense = expense?.clone() ?? _defaultExpense.clone(),
         super(SetExpenseState(expense ?? _defaultExpense));
-
-  late final Expense _originalExpense = _expense.clone();
 
   List<Mate> get mates => [...FlatRepository.i.value!.mates];
 

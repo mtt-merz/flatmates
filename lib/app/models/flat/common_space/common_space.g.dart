@@ -9,13 +9,12 @@ part of 'common_space.dart';
 CommonSpace _$CommonSpaceFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    allowedKeys: const ['name', 'colorValue', 'enabled'],
-    requiredKeys: const ['name', 'colorValue', 'enabled'],
+    allowedKeys: const ['name', 'colorValue'],
+    requiredKeys: const ['name', 'colorValue'],
   );
   return CommonSpace._(
     json['name'] as String,
     json['colorValue'] as int,
-    json['enabled'] as bool,
   );
 }
 
@@ -23,5 +22,4 @@ Map<String, dynamic> _$CommonSpaceToJson(CommonSpace instance) =>
     <String, dynamic>{
       'name': instance.name,
       'colorValue': instance.colorValue,
-      'enabled': instance.enabled,
     };

@@ -32,17 +32,6 @@ class InitCubit extends Cubit<InitCubitState> {
       if (flat == null) return emit(ShouldJoinOrCreateFlat());
       emit(Initialized());
     });
-    // UserRepository.i.stream.listen((user) async {
-    //   if (user == null) return;
-    //
-    //   if (user.flatIds.isEmpty) return emit(ShouldJoinOrCreateFlat());
-    //
-    //   if (user.currentFlatId == null)
-    //     await UserRepository.i.update(user..currentFlatId = user.flatIds.first);
-    //
-    //   await FlatRepository.i.fetch(user.currentFlatId!);
-    //   emit(Initialized());
-    // });
   }
 
   void joinFlat(String invitationCode) {
@@ -73,10 +62,10 @@ class InitCubit extends Cubit<InitCubitState> {
       if (FlatRepository.i.value!.mates.any((m) => m.name == name))
         emit(ShouldSetName(hasError: true));
 
-      await FlatRepository.i.update((flat) => flat..mates.add(mate));
+      await FlatRepository.i.updateFunctional((flat) => flat..mates.add(mate));
     } else
       await FlatRepository.i
-          .insert(Flat(mate: mate, commonSpaces: _defaultCommonSpaces));
+          .insert(Flat(mate: mate, commonSpaces: defaultCommonSpaces));
 
     final flat = FlatRepository.i.value!;
     await UserRepository.i.update(user
@@ -85,13 +74,4 @@ class InitCubit extends Cubit<InitCubitState> {
 
     emit(Initialized());
   }
-
-  List<CommonSpace> get _defaultCommonSpaces => [
-        CommonSpace('Kitchen', color: Colors.amber, enabled: true),
-        CommonSpace('Bathroom', color: Colors.cyan, enabled: true),
-        CommonSpace('Entrance', color: Colors.deepPurpleAccent),
-        CommonSpace('Living Room', color: Colors.deepOrange),
-        CommonSpace('Bedroom', color: Colors.blue),
-        CommonSpace('Terrace', color: Colors.pinkAccent),
-      ];
 }

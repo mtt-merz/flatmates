@@ -5,8 +5,8 @@ class CustomThemeData {
   final _primary = ThemeData.light().primaryColor;
 
   final _buttonRadius = 30.0;
-  final _cardRadius = 15.0;
-  final _horizontalPadding = 14.0;
+  final cardRadius = 15.0;
+  final fieldRadius = 5.0;
 
   /// Text
   final _text = const TextTheme(
@@ -53,12 +53,12 @@ class CustomThemeData {
         elevation: 0.0,
         margin: const EdgeInsets.only(bottom: 12.0),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(_cardRadius))),
+            borderRadius: BorderRadius.all(Radius.circular(cardRadius))),
       );
 
   /// ListTile
-  get _listTile => ListTileThemeData(
-        contentPadding: EdgeInsets.symmetric(horizontal: _horizontalPadding),
+  get _listTile => const ListTileThemeData(
+        contentPadding: EdgeInsets.symmetric(horizontal: 14),
         horizontalTitleGap: 0,
       );
 
@@ -105,15 +105,16 @@ class CustomThemeData {
 
   /// InputDecoration
   get _inputDecoration {
-    return const InputDecorationTheme(
+    return InputDecorationTheme(
       isCollapsed: false,
-      border: OutlineInputBorder(),
-      focusedBorder: OutlineInputBorder(
+      border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(fieldRadius))),
+      focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black54, width: 1.2)),
       focusColor: Colors.black54,
       iconColor: Colors.black54,
       floatingLabelBehavior: FloatingLabelBehavior.never,
-      contentPadding: EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
     );
   }
 

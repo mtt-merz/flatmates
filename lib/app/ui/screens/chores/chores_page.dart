@@ -14,29 +14,29 @@ class _ChoresPageState extends State<ChoresPage> {
   final cubit = ChoresCubit();
 
   @override
-  Widget build(BuildContext context) => BlocBuilder(
-      bloc: cubit,
-      builder: (context, state) {
-        if (state is Loading)
-          return const Center(child: CircularProgressIndicator());
+  Widget build(BuildContext context) => PageTemplate(
+        title: 'Chores',
+        onRefresh: cubit.refresh,
+        child: BlocBuilder(
+            bloc: cubit,
+            builder: (context, state) {
+              if (state is Loading) return const SizedBox();
 
-        final chores = (state as Loaded).chores;
-        return PageTemplate(
-          title: 'Chores',
-          onRefresh: cubit.refresh,
-          children: chores
-              .map((chore) => Card(
-                    child: ListTile(
-                      leading:
-                          const CircleAvatar(child: Icon(Icons.adb_outlined)),
-                      title: Text(chore.title),
-                    ),
-                  ))
-              .toList(),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {},
-          ),
-        );
-      });
+              final chores = (state as Loaded).chores;
+              return Column(
+                  children: chores
+                      .map((chore) => Card(
+                            child: ListTile(
+                              leading: const CircleAvatar(
+                                  child: Icon(Icons.adb_outlined)),
+                              title: Text(chore.title),
+                            ),
+                          ))
+                      .toList());
+            }),
+        floatingActionButton: FloatingActionButton(
+          child: const Icon(Icons.add),
+          onPressed: () {},
+        ),
+      );
 }

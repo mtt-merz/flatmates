@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class ScreenTemplate extends StatefulWidget {
   final String title;
   final String? subtitle;
+
+  final List<Widget>? actions;
   final List<Widget> children;
   final Widget? footer;
   final FloatingActionButton? floatingActionButton;
@@ -15,6 +17,7 @@ class ScreenTemplate extends StatefulWidget {
     required this.title,
     this.subtitle,
     required this.children,
+    this.actions,
     this.onPop,
     this.floatingActionButton,
     this.footer,
@@ -25,6 +28,7 @@ class ScreenTemplate extends StatefulWidget {
 }
 
 class _ScreenTemplateState extends State<ScreenTemplate> {
+  final expandedHeight = 130.0;
   String? subtitle;
 
   VoidCallback get pop => widget.onPop ?? Navigator.of(context).pop;
@@ -49,21 +53,39 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
                   SliverAppBar(
                     automaticallyImplyLeading: false,
                     pinned: true,
-                    expandedHeight: 150,
+                    expandedHeight: expandedHeight,
                     snap: true,
                     floating: true,
                     elevation: 2,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Text(widget.title,
-                          style: Theme.of(context).textTheme.headline6),
-                      titlePadding: EdgeInsetsDirectional.only(
-                          start:
-                              SizeUtils.of(context).basePadding.horizontal / 2,
-                          bottom: 16.0),
+                    actions: widget.actions,
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: pop,
                     ),
-                    actions: [
-                      IconButton(icon: const Icon(Icons.close), onPressed: pop)
-                    ],
+                    flexibleSpace: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final expansionPercentage = (constraints.maxHeight -
+                                MediaQuery.of(context).padding.top -
+                                kToolbarHeight) /
+                            (expandedHeight - kToolbarHeight);
+
+                        final double scaleValue =
+                            Tween<double>(begin: 1, end: 1.8)
+                                .transform(expansionPercentage);
+
+                        final x = (1 - expansionPercentage) * 36 +
+                            SizeUtils.of(context).horizontalPaddingValue;
+                        final y = constraints.maxHeight - kToolbarHeight + 16;
+
+                        final transform = Matrix4.translationValues(x, y, 0.0)
+                          ..scale(scaleValue, scaleValue, 2);
+                        return Transform(
+                          transform: transform,
+                          child: Text(widget.title,
+                              style: Theme.of(context).textTheme.headline6),
+                        );
+                      },
+                    ),
                   ),
 
                   // Body
@@ -90,9 +112,13 @@ class _ScreenTemplateState extends State<ScreenTemplate> {
         ),
         bottomNavigationBar: widget.footer == null
             ? null
-            : Padding(
-                padding: SizeUtils.of(context).basePadding,
-                child: widget.footer,
+            : Material(
+                elevation: 12,
+                color: Colors.white,
+                child: Container(
+                  padding: SizeUtils.of(context).basePadding,
+                  child: widget.footer,
+                ),
               ),
         floatingActionButton: widget.floatingActionButton,
       ),

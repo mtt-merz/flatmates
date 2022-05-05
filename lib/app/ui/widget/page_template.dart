@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PageTemplate extends StatelessWidget {
   final String title;
-  final List<Widget> children;
+  final Widget child;
   final FloatingActionButton? floatingActionButton;
 
   final void Function() onRefresh;
@@ -11,7 +11,7 @@ class PageTemplate extends StatelessWidget {
   const PageTemplate({
     Key? key,
     required this.title,
-    required this.children,
+    required this.child,
     this.floatingActionButton,
     required this.onRefresh,
   }) : super(key: key);
@@ -41,8 +41,7 @@ class PageTemplate extends StatelessWidget {
               ),
               SliverPadding(
                   padding: SizeUtils.of(context).basePadding,
-                  sliver:
-                      SliverList(delegate: SliverChildListDelegate(children))),
+                  sliver: SliverToBoxAdapter(child: child)),
             ]),
           ),
         ),

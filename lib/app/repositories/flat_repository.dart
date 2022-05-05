@@ -50,11 +50,12 @@ class FlatRepository with Repository<Flat?> {
     return _persistence.insert(Flat.key, flat);
   }
 
-  Future<void> update(Flat Function(Flat) updater) {
-    final flat = updater(value!);
+  Future<void> updateFunctional(Flat Function(Flat) updater) =>
+      update(updater(value!));
 
+  Future<void> update(Flat flat) async {
     addEvent(flat);
-    return _persistence.update(Flat.key, flat);
+    await _persistence.update(Flat.key, flat);
   }
 
   Future<void> remove() async {
@@ -62,7 +63,7 @@ class FlatRepository with Repository<Flat?> {
     addBreakingEvent(null);
   }
 
-  Future<void> updateMate(Mate newMate) => update((flat) => flat
+  Future<void> updateMate(Mate newMate) => updateFunctional((flat) => flat
     ..mates.remove(loggedMate(newMate.userId))
     ..mates.add(newMate));
 
@@ -70,13 +71,13 @@ class FlatRepository with Repository<Flat?> {
     final oldMate = loggedMate(oldUserId);
     if (oldMate == null) throw 'No logged mate found';
 
-    return update((flat) => flat
+    return updateFunctional((flat) => flat
       ..mates.remove(oldMate)
       ..mates.add(oldMate.copyWith(userId: newUserId)));
   }
 
   Future<void> removeMate(String userId) async {
-    await update((flat) => flat..mates.remove(loggedMate(userId)));
+    await updateFunctional((flat) => flat..mates.remove(loggedMate(userId)));
     if (value!.mates.isEmpty) await remove();
   }
 

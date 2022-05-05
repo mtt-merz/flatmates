@@ -38,4 +38,9 @@ class Flat extends SerializableModel {
 
   @override
   Map<String, dynamic> toJson() => _$FlatToJson(this);
+
+  Flat clone() => Flat._(id, invitationCode, name, mates, commonSpaces);
+
+  @override
+  List<Object> get props => [id, name ?? '', mates, ...commonSpaces];
 }
